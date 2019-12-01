@@ -81,7 +81,7 @@ strn::string64 str64(str);
 * Constructor with a C++ string view
 ```c++
 std::string str("test");
-std::string strv(str);
+std::string_view strv(str);
 strn::string64 str64(strv);
 ```
 * Construct from a C-string
@@ -92,7 +92,7 @@ auto str64 = "value"_s64;
 ## Member functions of string64
 ```c++
 constexpr const uint&      integer() const;
-constexpr std::size_t      hash () const;
+constexpr std::size_t      hash() const;
           std::string_view to_string_view() const;
           std::string      to_string() const;
           bool             empty() const;
@@ -112,5 +112,5 @@ constexpr bool             operator< (const string64& rhs) const;
 ```
 ## Static functions of string64
 ```c++
-constexpr static std::size_t max_length ();
+constexpr static std::size_t max_length();
 ```
