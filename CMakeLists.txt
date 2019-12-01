@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.8)
 # PROJECT
 project(strn CXX)
 
-# version numbers
+# VERSION
 set(STRN_VERSION_MAJOR 0)
 set(STRN_VERSION_MINOR 1)
 set(STRN_VERSION_PATCH 0)
@@ -27,6 +27,7 @@ endif()
 # STRN CONFIGURATION
 option(STRN_BUILD_SHARED_LIB "Indicates if we build a SHARED library or a STATIC library." ON)
 option(STRN_BUILD_TESTS "Indicates if we build the tests or not." OFF)
+option(STRN_BUILD_EXAMPLES "Indicates if we build the examples or not." OFF)
 
 #-----
 
@@ -73,31 +74,46 @@ elseif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
     target_compile_options(${target_name} PRIVATE -Wall -Wextra -pedantic)
 endif()
 
-# install
+#-----
+
+# INSTALL
 install(TARGETS ${target_name})
 install(DIRECTORY ${INCLUDE_DIRECTORY}/${PROJECT_NAME} DESTINATION ${INCLUDE_DIRECTORY})
 install(DIRECTORY ${PROJECT_BINARY_DIR}/${INCLUDE_DIRECTORY}/${PROJECT_NAME} DESTINATION ${INCLUDE_DIRECTORY})
 
 #-----
 
+# EXAMPLES
+if(${STRN_BUILD_EXAMPLES})
+    set(PROGRAMS_DIRECTORY example)
+    set(EXECUTABLE_OUTPUT_PATH ${EXECUTABLE_OUTPUT_PATH}/${PROGRAMS_DIRECTORY})
+    file(GLOB programs_cpp_files "${PROGRAMS_DIRECTORY}/*.cpp")
+    foreach(filename ${programs_cpp_files})
+        get_filename_component(program_exe_name ${filename} NAME_WE)
+        add_executable(${program_exe_name} ${filename})
+        target_link_libraries(${program_exe_name} strn)
+    endforeach()
+endif()
+
+#-----
+
 # TESTS
 if(${STRN_BUILD_TESTS})
     enable_testing()
-    set(TEST_DIRECTORY test)
-    set(EXECUTABLE_OUTPUT_PATH ${EXECUTABLE_OUTPUT_PATH}/test)
-    file(GLOB tests_cpp_files "${TEST_DIRECTORY}/*.cpp")
-    foreach(filename ${tests_cpp_files})
-        get_filename_component(test_exe_name ${filename} NAME_WE)
-        add_executable(${test_exe_name} ${filename})
-        target_link_libraries(${test_exe_name} strn)
-        add_test("${test_exe_name}" ${EXECUTABLE_OUTPUT_PATH}/${test_exe_name})
+    set(PROGRAMS_DIRECTORY test)
+    set(EXECUTABLE_OUTPUT_PATH ${EXECUTABLE_OUTPUT_PATH}/${PROGRAMS_DIRECTORY})
+    file(GLOB programs_cpp_files "${PROGRAMS_DIRECTORY}/*.cpp")
+    foreach(filename ${programs_cpp_files})
+        get_filename_component(program_exe_name ${filename} NAME_WE)
+        add_executable(${program_exe_name} ${filename})
+        target_link_libraries(${program_exe_name} strn)
+        add_test("${program_exe_name}" ${EXECUTABLE_OUTPUT_PATH}/${program_exe_name})
     endforeach()
 endif()
 
 #-----
 
 # PACKAGE
-
 set(CPACK_GENERATOR                   "STGZ;TGZ;ZIP")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${CMAKE_PROJECT_NAME}")
 set(CPACK_PACKAGE_VENDOR              "Aymeric Pellé")
