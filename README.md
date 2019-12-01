@@ -3,7 +3,8 @@
 The purpose is to provide a short string class (8 bytes max) whose hash is trivially computable
 (no loop operation), and comparaison operations are trivial too (no loop operation again).
 
-# Build #
+# Install #
+## Build ##
 ```
 cd /path/to/strn
 mkdir build
@@ -12,10 +13,10 @@ cmake ..
 make
 ```
 
-# Install #
+## Install ##
 `make install`
 
-# Create a package #
+## Create a package ##
 `cpack`
 
 # How to use
