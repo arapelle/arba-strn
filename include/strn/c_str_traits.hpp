@@ -15,10 +15,10 @@ struct c_str_n_traits<char[N]>
     inline static constexpr std::size_t length = N;
 
     template <std::size_t I, std::enable_if_t<!(I>=N), int> = 0>
-    inline static char nth(const char(& cstr)[N]) { return cstr[I]; }
+    inline constexpr static char nth(const char(& cstr)[N]) { return cstr[I]; }
 
     template <std::size_t I, std::enable_if_t<(I>=N), int> = 0>
-    inline static char nth(const char(&)[N]) { return '\0'; }
+    inline constexpr static char nth(const char(&)[N]) { return '\0'; }
 };
 
 template <typename T>

@@ -35,7 +35,7 @@ public:
      * strn::string64 s64();
      * strn::string64 s64(1235);
      */
-    inline explicit string64(uint value = 0)
+    inline constexpr explicit string64(uint value = 0)
         : integer_(value)
     {}
 
@@ -67,7 +67,7 @@ public:
      */
     template <typename T, typename Tr = c_str_n_traits<T>,
             std::enable_if_t<Tr::length <= max_input_c_str_length_ && is_c_str_n_v<T>, int> = 0>
-    explicit string64(const T& cstr)
+    string64(const T& cstr)
       : cstr_{cstr[0], Tr::template nth<1>(cstr), Tr::template nth<2>(cstr), Tr::template nth<3>(cstr),
                        Tr::template nth<4>(cstr), Tr::template nth<5>(cstr), Tr::template nth<6>(cstr), Tr::template nth<7>(cstr)}
     {}
@@ -77,7 +77,7 @@ public:
      */
     template <typename T, typename Tr = c_str_n_traits<T>,
             std::enable_if_t<(!(Tr::length <= max_input_c_str_length_)) && is_c_str_n_v<T>, int> = 0>
-    explicit string64(const T& cstr) = delete;
+    string64(const T& cstr) = delete;
 
     /**
      * @brief string64
@@ -92,12 +92,12 @@ public:
       : string64(std::string_view(cstr))
     {}
 
-    inline const uint& integer() const { return integer_; }
-    inline std::size_t hash () const { return static_cast<std::size_t>(integer_); }
-    inline std::string_view to_string_view() const { return std::string_view(cstr_.data()); }
-    inline std::string to_string() const { return std::string(cstr_.data()); }
+    inline constexpr const uint& integer() const { return integer_; }
+    inline constexpr std::size_t hash () const { return static_cast<std::size_t>(integer_); }
+    inline std::string_view to_string_view() const { return std::string_view(cstr_.data(), length()); }
+    inline std::string to_string() const { return std::string(begin(), end()); }
     inline bool empty() const { return cstr_.front() == '\0'; }
-    inline bool not_empty() const { return cstr_.front() != '\0'; }
+    inline bool not_empty() const { return !empty(); }
     inline std::size_t length() const { return cstr_.back() ? max_length() : std::strlen(cstr_.data()); }
     inline constexpr static std::size_t max_length () { return buffer_size_; }
     inline const_iterator begin() const { return cstr_.begin(); }
@@ -106,11 +106,11 @@ public:
     iterator end();
     inline const_iterator cbegin() const { return begin(); }
     inline const_iterator cend() const { return end(); }
-    inline const char& operator[] (std::size_t index) const { return cstr_[index]; }
-    inline char& operator[] (std::size_t index) { return cstr_[index]; }
-    inline bool operator== (const string64& rhs) const { return integer_ == rhs.integer_; }
-    inline bool operator!= (const string64& rhs) const { return integer_ != rhs.integer_; }
-    inline bool operator< (const string64& rhs) const { return integer_ < rhs.integer_; }
+    inline const char& operator[](std::size_t index) const { return cstr_[index]; }
+    inline char& operator[](std::size_t index) { return cstr_[index]; }
+    inline constexpr bool operator==(const string64& rhs) const { return integer_ == rhs.integer_; }
+    inline constexpr bool operator!=(const string64& rhs) const { return integer_ != rhs.integer_; }
+    inline constexpr bool operator<(const string64& rhs) const { return integer_ < rhs.integer_; }
 
 private:
     union
@@ -119,14 +119,26 @@ private:
         uint integer_ = 0;
     };
 };
-static_assert(sizeof(string64) == sizeof(uint64_t));
+static_assert(sizeof(string64::uint) == sizeof(uint64_t));
+static_assert(sizeof(string64) == sizeof(string64::uint));
 
 inline namespace literals
 {
 /// operator"" _s64
-inline string64 operator"" _s64(const char* cstr, std::size_t len)
+inline constexpr string64 operator"" _s64(const char* cstr, std::size_t len)
 {
-    return string64(std::string_view(cstr, std::min<std::size_t>(len, string64::max_length())));
+    if (len <= string64::max_length())
+    {
+        string64::uint value = 0;
+        for (uint8_t i = 0; i < sizeof(std::size_t) && i < len; ++i)
+        {
+            string64::uint vi = static_cast<std::size_t>(cstr[i]);
+            vi <<= (8*i);
+            value |= vi;
+        }
+        return string64(value);
+    }
+    return string64("#BAD_S64");
 }
 }
 
@@ -134,12 +146,12 @@ inline string64 operator"" _s64(const char* cstr, std::size_t len)
 
 
 template <class T>
-inline constexpr bool is_enum64_v = std::is_enum_v<T> && (sizeof(T) == sizeof(uint64_t));
+inline constexpr bool is_enum64_v = std::is_enum_v<T> && (sizeof(T) == sizeof(string64));
 
 template <class Enum, std::enable_if_t<is_enum64_v<Enum>, int> = 0>
-inline string64 to_string64(const Enum& e)
+inline constexpr string64 to_string64(const Enum& e)
 {
-    return string64(static_cast<uint64_t>(e));
+    return string64(static_cast<string64::uint>(e));
 }
 
 template <class Enum, std::enable_if_t<is_enum64_v<Enum>, int> = 0>
@@ -149,7 +161,7 @@ inline std::string to_string(const Enum& e)
 }
 
 template <class Enum, std::enable_if_t<is_enum64_v<Enum>, int> = 0>
-inline Enum to_enum(const string64& str)
+inline constexpr Enum to_enum(const string64& str)
 {
     return static_cast<Enum>(str.integer());
 }

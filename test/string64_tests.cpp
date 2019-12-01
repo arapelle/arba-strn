@@ -1,4 +1,6 @@
+#include <strn/io.hpp>
 #include <strn/string64.hpp>
+#include <sstream>
 #include <cstdlib>
 #include <cassert>
 
@@ -204,6 +206,33 @@ void test_std_hash()
     assert(std_hash("final"_s64) == "final"_hash);
 }
 
+void test_operator_read()
+{
+    std::istringstream stream("abc\t123");
+    strn::string64 str;
+    stream >> str;
+    assert(str == "abc"_s64);
+    assert(str.hash() == "abc"_hash);
+}
+
+void test_operator_write()
+{
+    strn::string64 str("12345678");
+    std::ostringstream stream;
+    stream << str;
+    assert(stream.str() == str.to_string_view());
+}
+
+void test_constexpr()
+{
+    if constexpr ("a"_s64 == "a"_s64)
+    {
+        assert("a"_s64 == "a"_s64);
+        return;
+    }
+    assert(false);
+}
+
 int main ()
 {
     test_hash_literal();
@@ -227,6 +256,9 @@ int main ()
     test_enum_to_string();
     test_string_64_to_enum();
     test_std_hash();
+    test_operator_read();
+    test_operator_write();
+    test_constexpr();
 
     return EXIT_SUCCESS;
 }
