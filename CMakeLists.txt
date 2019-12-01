@@ -39,8 +39,8 @@ set(INCLUDE_DIRECTORY include)
 set(SRC_DIRECTORY src)
 
 configure_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/version.hpp.in"
-  "${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}/version.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/version/version.hpp.in"
+  "${PROJECT_BINARY_DIR}/${INCLUDE_DIRECTORY}/${PROJECT_NAME}/version.hpp"
 )
 
 # INCLUDE
@@ -93,3 +93,25 @@ if(${STRN_BUILD_TESTS})
         add_test("${test_exe_name}" ${EXECUTABLE_OUTPUT_PATH}/${test_exe_name})
     endforeach()
 endif()
+
+#-----
+
+# PACKAGE
+
+set(CPACK_GENERATOR                   "STGZ;TGZ;ZIP")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${CMAKE_PROJECT_NAME}")
+set(CPACK_PACKAGE_VENDOR              "Aymeric Pellé")
+set(CPACK_PACKAGE_DESCRIPTION_FILE    "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+set(CPACK_RESOURCE_FILE_LICENSE       "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.md")
+set(CPACK_PACKAGE_VERSION_MAJOR       "${STRN_VERSION_MAJOR}")
+set(CPACK_PACKAGE_VERSION_MINOR       "${STRN_VERSION_MINOR}")
+set(CPACK_PACKAGE_VERSION_PATCH       "${STRN_VERSION_PATCH}")
+set(CPACK_PACKAGE_INSTALL_DIRECTORY   "${CMAKE_PROJECT_NAME}")
+#if(WIN32 AND NOT UNIX)
+#  set(CPACK_NSIS_DISPLAY_NAME         "${CPACK_PACKAGE_INSTALL_DIRECTORY}")
+#  set(CPACK_NSIS_CONTACT              "arapelle@gmail.com")
+#  set(CPACK_NSIS_MODIFY_PATH ON)
+#else(WIN32 AND NOT UNIX)
+#endif(WIN32 AND NOT UNIX)
+
+include(CPack)
