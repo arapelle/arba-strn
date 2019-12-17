@@ -116,3 +116,7 @@ constexpr bool             operator< (const string64& rhs) const;
 ```c++
 constexpr static std::size_t max_length();
 ```
+
+## License
+
+[MIT License](./LICENSE.md) © strn
