@@ -7,10 +7,9 @@ The purpose is to provide a short string class (8 bytes max) whose hash is trivi
 ## Build ##
 You need a C++17 compiler (ex: g++-9).
 ```
-cd /path/to/strn
 mkdir build
 cd build
-cmake ..
+cmake /path/to/strn
 make
 ```
 
