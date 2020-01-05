@@ -34,6 +34,8 @@ int main()
 }
 ```
 
+To compile : `g++ example.cpp -o output -std=c++17 -lstrn`
+
 ## Example - As a map key
 ```c++
 #include <strn/string64.hpp>
