@@ -1,15 +1,18 @@
 cmake_minimum_required(VERSION 3.8)
 
+# CHECK CMAKE_BINARY_DIR
+string(FIND "${CMAKE_BINARY_DIR}" "${CMAKE_SOURCE_DIR}" check_binary_dir_res)
+if("${check_binary_dir_res}" EQUAL 0)
+    message(STATUS "CMAKE_SOURCE_DIR: ${CMAKE_SOURCE_DIR}")
+    message(STATUS "CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}")
+    message(FATAL_ERROR "CMAKE_BINARY_DIR must not be located in CMAKE_SOURCE_DIR!")
+endif()
+
 # PROJECT
 project(strn CXX)
 
-# VERSION
-set(STRN_VERSION_MAJOR 0)
-set(STRN_VERSION_MINOR 1)
-set(STRN_VERSION_PATCH 0)
-set(STRN_VERSION_COMMENT "strn::string64 created.")
-
 #-----
+## C++ PROJECT CONF
 
 # C++ Standard
 set(CMAKE_CXX_STANDARD 17)
@@ -23,49 +26,58 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 endif()
 
 #-----
+## STRN PROJECT CONF
 
-# STRN CONFIGURATION
+# VERSION
+set(STRN_VERSION_MAJOR 0)
+set(STRN_VERSION_MINOR 1)
+set(STRN_VERSION_PATCH 0)
+set(STRN_VERSION ${STRN_VERSION_MAJOR}.${STRN_VERSION_MINOR}.${STRN_VERSION_PATCH})
+set(STRN_VERSION_COMMENT "strn::string64 created.")
+
+# OPTIONS
 option(STRN_BUILD_SHARED_LIB "Indicates if we build a SHARED library or a STATIC library." ON)
 option(STRN_BUILD_TESTS "Indicates if we build the tests or not." OFF)
 option(STRN_BUILD_EXAMPLES "Indicates if we build the examples or not." OFF)
 
+# OUTPUT PATHS
+set(RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BUILD_TYPE}/bin)
+set(LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BUILD_TYPE}/lib)
+
+# PRINT STATUS
+message(STATUS "CMAKE_BUILD_TYPE: " ${CMAKE_BUILD_TYPE})
+message(STATUS "CMAKE_CXX_COMPILER: " ${CMAKE_CXX_COMPILER})
+
 #-----
 
-# OUTPUT
-set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BUILD_TYPE}/bin)
-set(LIBRARY_OUTPUT_PATH ${CMAKE_BUILD_TYPE}/lib)
-
-# INCLUDE/SRC
+# SET VARS INCLUDE/SRC
 set(INCLUDE_DIRECTORY include)
 set(SRC_DIRECTORY src)
 
-configure_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/version/version.hpp.in"
-  "${PROJECT_BINARY_DIR}/${INCLUDE_DIRECTORY}/${PROJECT_NAME}/version.hpp"
-)
-
-# INCLUDE
-include_directories(${INCLUDE_DIRECTORY})
-include_directories(${PROJECT_BINARY_DIR}/${INCLUDE_DIRECTORY})
-
-message(STATUS "CMAKE_CXX_COMPILER: " ${CMAKE_CXX_COMPILER})
-message(STATUS "CMAKE_BUILD_TYPE: " ${CMAKE_BUILD_TYPE})
-message(STATUS "CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS})
-message(STATUS "CMAKE_CXX_FLAGS_DEBUG: " ${CMAKE_CXX_FLAGS_DEBUG})
-message(STATUS "CMAKE_CXX_FLAGS_RELEASE: " ${CMAKE_CXX_FLAGS_RELEASE})
+# GENERATE version.hpp
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/version/version.hpp.in"
+               "${PROJECT_BINARY_DIR}/${INCLUDE_DIRECTORY}/${PROJECT_NAME}/version.hpp")
 
 #-----
 
-# STRN LIBRARY
+include(GNUInstallDirs)
+
+# TARGET LIBRARY STRN
 set(target_name ${PROJECT_NAME})
 
-# find source files and add library
+# add library
+file(GLOB_RECURSE target_header_files ${INCLUDE_DIRECTORY}/*)
 file(GLOB_RECURSE target_src_files ${SRC_DIRECTORY}/*)
 if(${STRN_BUILD_SHARED_LIB})
-    add_library(${target_name} SHARED ${target_src_files})
+    add_library(${target_name} SHARED ${target_header_files} ${target_src_files})
 else()
-    add_library(${target_name} STATIC ${target_src_files})
+    add_library(${target_name} STATIC ${target_header_files} ${target_src_files})
 endif()
+
+target_include_directories(${target_name} PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${INCLUDE_DIRECTORY}>
+    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/${INCLUDE_DIRECTORY}>
+    $<INSTALL_INTERFACE:${INCLUDE_DIRECTORY}>/strn)
 
 # compile options
 if(MSVC)
@@ -77,16 +89,27 @@ endif()
 #-----
 
 # INSTALL
-install(TARGETS ${target_name})
+install(TARGETS ${target_name} EXPORT ${target_name} LIBRARY DESTINATION lib PUBLIC_HEADER DESTINATION include/strn)
 install(DIRECTORY ${INCLUDE_DIRECTORY}/${PROJECT_NAME} DESTINATION ${INCLUDE_DIRECTORY})
 install(DIRECTORY ${PROJECT_BINARY_DIR}/${INCLUDE_DIRECTORY}/${PROJECT_NAME} DESTINATION ${INCLUDE_DIRECTORY})
+install(EXPORT ${target_name} DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${target_name})
+#install(FILES ${target_name}-config.cmake DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${target_name})
+
+include(CMakePackageConfigHelpers)
+configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/strn-config.cmake.in
+                             "${CMAKE_CURRENT_BINARY_DIR}/strn-config.cmake"
+                             INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${target_name}")
+
+install(FILES
+  ${CMAKE_CURRENT_BINARY_DIR}/strn-config.cmake
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${target_name})
 
 #-----
 
 # EXAMPLES
 if(${STRN_BUILD_EXAMPLES})
     set(PROGRAMS_DIRECTORY example)
-    set(EXECUTABLE_OUTPUT_PATH ${EXECUTABLE_OUTPUT_PATH}/${PROGRAMS_DIRECTORY})
+    set(RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PROGRAMS_DIRECTORY})
     file(GLOB programs_cpp_files "${PROGRAMS_DIRECTORY}/*.cpp")
     foreach(filename ${programs_cpp_files})
         get_filename_component(program_exe_name ${filename} NAME_WE)
@@ -101,7 +124,7 @@ endif()
 if(${STRN_BUILD_TESTS})
     enable_testing()
     set(PROGRAMS_DIRECTORY test)
-    set(EXECUTABLE_OUTPUT_PATH ${EXECUTABLE_OUTPUT_PATH}/${PROGRAMS_DIRECTORY})
+    set(RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PROGRAMS_DIRECTORY})
     file(GLOB programs_cpp_files "${PROGRAMS_DIRECTORY}/*.cpp")
     foreach(filename ${programs_cpp_files})
         get_filename_component(program_exe_name ${filename} NAME_WE)
