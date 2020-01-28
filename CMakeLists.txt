@@ -45,8 +45,9 @@ set(RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BUILD_TYPE}/bin)
 set(LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BUILD_TYPE}/lib)
 
 # PRINT STATUS
-message(STATUS "CMAKE_BUILD_TYPE: " ${CMAKE_BUILD_TYPE})
-message(STATUS "CMAKE_CXX_COMPILER: " ${CMAKE_CXX_COMPILER})
+message(STATUS "PROJECT: ${PROJECT_NAME} v${STRN_VERSION}")
+message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
+message(STATUS "CMAKE_CXX_COMPILER: ${CMAKE_CXX_COMPILER}")
 
 #-----
 
@@ -77,7 +78,7 @@ endif()
 target_include_directories(${target_name} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${INCLUDE_DIRECTORY}>
     $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/${INCLUDE_DIRECTORY}>
-    $<INSTALL_INTERFACE:${INCLUDE_DIRECTORY}>/strn)
+    $<INSTALL_INTERFACE:${INCLUDE_DIRECTORY}>)
 
 # compile options
 if(MSVC)
@@ -92,17 +93,24 @@ endif()
 install(TARGETS ${target_name} EXPORT ${target_name} LIBRARY DESTINATION lib PUBLIC_HEADER DESTINATION include/strn)
 install(DIRECTORY ${INCLUDE_DIRECTORY}/${PROJECT_NAME} DESTINATION ${INCLUDE_DIRECTORY})
 install(DIRECTORY ${PROJECT_BINARY_DIR}/${INCLUDE_DIRECTORY}/${PROJECT_NAME} DESTINATION ${INCLUDE_DIRECTORY})
-install(EXPORT ${target_name} DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${target_name})
-#install(FILES ${target_name}-config.cmake DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${target_name})
+install(EXPORT ${target_name} DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
 
 include(CMakePackageConfigHelpers)
+
 configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/strn-config.cmake.in
                              "${CMAKE_CURRENT_BINARY_DIR}/strn-config.cmake"
-                             INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${target_name}")
+                             INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
+                             NO_SET_AND_CHECK_MACRO
+                             NO_CHECK_REQUIRED_COMPONENTS_MACRO)
+
+write_basic_package_version_file("${CMAKE_CURRENT_BINARY_DIR}/strn-config-version.cmake"
+    VERSION ${STRN_VERSION}
+    COMPATIBILITY SameMajorVersion)
 
 install(FILES
-  ${CMAKE_CURRENT_BINARY_DIR}/strn-config.cmake
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${target_name})
+    ${CMAKE_CURRENT_BINARY_DIR}/strn-config.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/strn-config-version.cmake
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
 
 #-----
 
