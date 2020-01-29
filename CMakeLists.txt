@@ -36,7 +36,8 @@ set(STRN_VERSION ${STRN_VERSION_MAJOR}.${STRN_VERSION_MINOR}.${STRN_VERSION_PATC
 set(STRN_VERSION_COMMENT "strn::string64 created.")
 
 # OPTIONS
-option(STRN_BUILD_SHARED_LIB "Indicates if we build a SHARED library or a STATIC library." ON)
+option(STRN_BUILD_SHARED_LIB "Indicates if we build a SHARED library." ON)
+option(STRN_BUILD_STATIC_LIB "Indicates if we build a STATIC library." ON)
 option(STRN_BUILD_TESTS "Indicates if we build the tests or not." OFF)
 option(STRN_BUILD_EXAMPLES "Indicates if we build the examples or not." OFF)
 
@@ -69,16 +70,18 @@ set(target_name ${PROJECT_NAME})
 # add library
 file(GLOB_RECURSE target_header_files ${INCLUDE_DIRECTORY}/*)
 file(GLOB_RECURSE target_src_files ${SRC_DIRECTORY}/*)
-if(${STRN_BUILD_SHARED_LIB})
-    add_library(${target_name} SHARED ${target_header_files} ${target_src_files})
-else()
-    add_library(${target_name} STATIC ${target_header_files} ${target_src_files})
-endif()
-
-target_include_directories(${target_name} PUBLIC
+add_library(${target_name}-object OBJECT ${target_header_files} ${target_src_files})
+target_include_directories(${target_name}-object PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${INCLUDE_DIRECTORY}>
     $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/${INCLUDE_DIRECTORY}>
     $<INSTALL_INTERFACE:${INCLUDE_DIRECTORY}>)
+set_property(TARGET ${target_name}-object PROPERTY POSITION_INDEPENDENT_CODE 1)
+if(${STRN_BUILD_SHARED_LIB})
+    add_library(${target_name} SHARED $<TARGET_OBJECTS:${target_name}-object>)
+endif()
+if(${STRN_BUILD_STATIC_LIB})
+    add_library(${target_name}-static STATIC $<TARGET_OBJECTS:${target_name}-object>)
+endif()
 
 # compile options
 if(MSVC)
@@ -90,7 +93,7 @@ endif()
 #-----
 
 # INSTALL
-install(TARGETS ${target_name} EXPORT ${target_name} LIBRARY DESTINATION lib PUBLIC_HEADER DESTINATION include/strn)
+install(TARGETS ${target_name} ${target_name}-static EXPORT ${target_name})
 install(DIRECTORY ${INCLUDE_DIRECTORY}/${PROJECT_NAME} DESTINATION ${INCLUDE_DIRECTORY})
 install(DIRECTORY ${PROJECT_BINARY_DIR}/${INCLUDE_DIRECTORY}/${PROJECT_NAME} DESTINATION ${INCLUDE_DIRECTORY})
 install(EXPORT ${target_name} DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
@@ -123,6 +126,9 @@ if(${STRN_BUILD_EXAMPLES})
         get_filename_component(program_exe_name ${filename} NAME_WE)
         add_executable(${program_exe_name} ${filename})
         target_link_libraries(${program_exe_name} strn)
+        target_include_directories(${program_exe_name} PUBLIC
+            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${INCLUDE_DIRECTORY}>
+            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/${INCLUDE_DIRECTORY}>)
     endforeach()
 endif()
 
@@ -138,6 +144,9 @@ if(${STRN_BUILD_TESTS})
         get_filename_component(program_exe_name ${filename} NAME_WE)
         add_executable(${program_exe_name} ${filename})
         target_link_libraries(${program_exe_name} strn)
+        target_include_directories(${program_exe_name} PUBLIC
+            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${INCLUDE_DIRECTORY}>
+            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/${INCLUDE_DIRECTORY}>)
         add_test("${program_exe_name}" ${EXECUTABLE_OUTPUT_PATH}/${program_exe_name})
     endforeach()
 endif()

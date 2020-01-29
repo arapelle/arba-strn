@@ -3,3 +3,17 @@
 @PACKAGE_INIT@
 
 include(${CMAKE_CURRENT_LIST_DIR}/strn.cmake)
+
+get_target_property(strn-CONFS strn IMPORTED_CONFIGURATIONS)
+if(strn-CONFS)
+    message(STATUS "strn-CONFS: ${strn-CONFS}")
+    foreach(strn-CONF ${strn-CONFS})
+        get_target_property(strn_IMPORTED_LOCATION_${strn-CONF} strn IMPORTED_LOCATION_${strn-CONF})
+        get_target_property(strn-static_IMPORTED_LOCATION_${strn-CONF} strn-static IMPORTED_LOCATION_${strn-CONF})
+        message(STATUS "strn-${strn-CONF}: ${strn_IMPORTED_LOCATION_${strn-CONF}} ${strn-static_IMPORTED_LOCATION_${strn-CONF}}")
+        set_target_properties(strn PROPERTIES
+            LIBRARY_OUTPUT_NAME_${strn-CONF} ${strn_IMPORTED_LOCATION_${strn-CONF}}
+            ARCHIVE_OUTPUT_NAME_${strn-CONF} ${strn-static_IMPORTED_LOCATION_${strn-CONF}}
+            )
+    endforeach()
+endif()
