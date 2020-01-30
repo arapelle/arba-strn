@@ -104,6 +104,9 @@ elseif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
     target_compile_options(${target_name} PRIVATE -Wall -Wextra -pedantic)
 endif()
 
+set_target_properties(${target_name} PROPERTIES DEBUG_POSTFIX "-d")
+set_target_properties(${target_name}-static PROPERTIES DEBUG_POSTFIX "-d")
+
 #-----
 
 # INSTALL
