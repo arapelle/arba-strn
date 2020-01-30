@@ -1,12 +1,26 @@
 cmake_minimum_required(VERSION 3.8)
 
+include(CMakePrintHelpers)
+
 # CHECK CMAKE_BINARY_DIR
-string(FIND "${CMAKE_BINARY_DIR}" "${CMAKE_SOURCE_DIR}" check_binary_dir_res)
-if("${check_binary_dir_res}" EQUAL 0)
-    message(STATUS "CMAKE_SOURCE_DIR: ${CMAKE_SOURCE_DIR}")
-    message(STATUS "CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}")
-    message(FATAL_ERROR "CMAKE_BINARY_DIR must not be located in CMAKE_SOURCE_DIR!")
-endif()
+set(bin_dir ${CMAKE_BINARY_DIR})
+set(bin_dir_while TRUE)
+while(${bin_dir_while})
+    if(${bin_dir} STREQUAL ${CMAKE_SOURCE_DIR})
+        message(STATUS "CMAKE_SOURCE_DIR: ${CMAKE_SOURCE_DIR}")
+        message(STATUS "CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}")
+        message(FATAL_ERROR "CMAKE_BINARY_DIR must not be located in CMAKE_SOURCE_DIR!")
+    endif()
+    get_filename_component(parent_bin_dir ${bin_dir} DIRECTORY)
+    if(${parent_bin_dir} STREQUAL ${bin_dir})
+        set(bin_dir_while FALSE)
+    else()
+        set(bin_dir ${parent_bin_dir})
+    endif()
+endwhile()
+unset(parent_bin_dir)
+unset(bin_dir_while)
+unset(bin_dir)
 
 # PROJECT
 project(strn CXX)
