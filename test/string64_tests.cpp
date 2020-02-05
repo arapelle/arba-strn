@@ -139,6 +139,14 @@ void test_iterators()
     assert(std::distance(str64.begin(), str64.end()) == 8);
 }
 
+void test_is_printable()
+{
+    strn::string64 str64("abcdefgh");
+    assert(str64.is_printable());
+    strn::string64 str64_not_printable("abc\1\2");
+    assert(!str64_not_printable.is_printable());
+}
+
 void test_nth()
 {
     strn::string64 str64("abc123d");
@@ -250,6 +258,7 @@ int main ()
     test_empty_or_not();
     test_length();
     test_iterators();
+    test_is_printable();
     test_nth();
     test_operator_less();
     test_enum_to_string_64();

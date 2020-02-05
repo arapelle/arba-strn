@@ -107,6 +107,7 @@ constexpr std::size_t      hash() const;
           iterator         end();
           const_iterator   cbegin() const;
           const_iterator   cend() const;
+          bool             is_printable() const;
           const char&      operator[](std::size_t index) const;
           char&            operator[](std::size_t index);
 constexpr bool             operator==(const string64& rhs) const;

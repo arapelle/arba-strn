@@ -22,4 +22,18 @@ string64::iterator string64::end()
     return iter;
 }
 
+bool string64::is_printable() const
+{
+    for (buffer_type_::const_iterator iter = cstr_.begin(), end_iter = cstr_.end();
+         iter != end_iter;
+         ++iter)
+    {
+        if (*iter == 0)
+            return true;
+        if (!isprint(*iter))
+            return false;
+    }
+    return true;
+}
+
 }

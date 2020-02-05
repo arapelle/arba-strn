@@ -106,6 +106,7 @@ public:
     iterator end();
     inline const_iterator cbegin() const { return begin(); }
     inline const_iterator cend() const { return end(); }
+    bool is_printable() const;
     inline const char& operator[](std::size_t index) const { return cstr_[index]; }
     inline char& operator[](std::size_t index) { return cstr_[index]; }
     inline constexpr bool operator==(const string64& rhs) const { return integer_ == rhs.integer_; }
