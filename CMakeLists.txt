@@ -87,14 +87,15 @@ file(GLOB_RECURSE target_src_files ${SRC_DIRECTORY}/*)
 add_library(${target_name}-object OBJECT ${target_header_files} ${target_src_files})
 target_include_directories(${target_name}-object PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${INCLUDE_DIRECTORY}>
-    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/${INCLUDE_DIRECTORY}>
-    $<INSTALL_INTERFACE:${INCLUDE_DIRECTORY}>)
+    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/${INCLUDE_DIRECTORY}>)
 set_property(TARGET ${target_name}-object PROPERTY POSITION_INDEPENDENT_CODE 1)
 if(${STRN_BUILD_SHARED_LIB})
     add_library(${target_name} SHARED $<TARGET_OBJECTS:${target_name}-object>)
+    target_include_directories(${target_name} PUBLIC $<INSTALL_INTERFACE:${INCLUDE_DIRECTORY}>)
 endif()
 if(${STRN_BUILD_STATIC_LIB})
     add_library(${target_name}-static STATIC $<TARGET_OBJECTS:${target_name}-object>)
+    target_include_directories(${target_name}-static PUBLIC $<INSTALL_INTERFACE:${INCLUDE_DIRECTORY}>)
 endif()
 
 # compile options
@@ -104,7 +105,7 @@ elseif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
     target_compile_options(${target_name} PRIVATE -Wall -Wextra -pedantic)
 endif()
 
-set_target_properties(${target_name} PROPERTIES DEBUG_POSTFIX "-d")
+set_target_properties(${target_name}        PROPERTIES DEBUG_POSTFIX "-d")
 set_target_properties(${target_name}-static PROPERTIES DEBUG_POSTFIX "-d")
 
 #-----

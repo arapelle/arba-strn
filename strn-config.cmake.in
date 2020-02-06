@@ -6,6 +6,12 @@ include(${CMAKE_CURRENT_LIST_DIR}/strn.cmake)
 
 get_target_property(strn-CONFS strn IMPORTED_CONFIGURATIONS)
 if(strn-CONFS)
+    get_target_property(inc-dirs strn INTERFACE_INCLUDE_DIRECTORIES)
+    if(NOT inc-dirs)
+        get_target_property(inc-dirs strn-static INTERFACE_INCLUDE_DIRECTORIES)
+    endif()
+    set_target_properties(strn PROPERTIES INCLUDE_DIRECTORIES ${inc-dirs})
+    set(strn_INCLUDE_DIRECTORIES ${inc-dirs})
     foreach(strn-CONF ${strn-CONFS})
         # Get shared
         get_target_property(shared-path strn IMPORTED_LOCATION_${strn-CONF})
