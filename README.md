@@ -1,11 +1,21 @@
 # Concept #
 
 The purpose is to provide a short string class (8 bytes max) whose hash is trivially computable
-(no loop operation), and comparaison operations are trivial too (no loop operation again).
+(no loop operation), and comparison operations are trivial too (no loop operation again).
 
 # Install #
-## Build ##
+## Requirements ##
 You need a C++17 compiler (ex: g++-9).
+
+## Quick Install ##
+There is a cmake script at the root of the project which builds the library in *Release* mode and install it (default options are used).
+```
+cd /path/to/strn
+cmake -P quick_install.cmake
+```
+
+## Custom Install ##
+### Build ###
 ```
 mkdir build
 cd build
@@ -13,7 +23,7 @@ cmake /path/to/strn
 make
 ```
 
-## Install ##
+### Install ###
 `make install`
 
 ## Create a package ##
