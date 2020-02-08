@@ -3,17 +3,17 @@
 set(project "strn")
 
 if(WIN32)
-    set(temp_dir $ENV{TEMP}\\${project}-build)
-    set(error_file ${temp_dir}\\quick_install_error)
+    set(temp_dir $ENV{TEMP})
 elseif(UNIX)
-    set(temp_dir /tmp/${project}-build)
-    set(error_file ${temp_dir}/quick_install_error)
+    set(temp_dir /tmp)
 else()
     message(FATAL_ERROR "No temporary directory found!")
 endif()
 
+file(TO_NATIVE_PATH "/" path_sep)
 set(src_dir ${CMAKE_CURRENT_LIST_DIR})
-set(build_dir ${temp_dir})
+set(build_dir ${temp_dir}${path_sep}${project}-build)
+set(error_file ${build_dir}${path_sep}quick_install_error)
 
 if(EXISTS ${error_file})
     file(REMOVE_RECURSE ${build_dir})
