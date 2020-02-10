@@ -79,42 +79,45 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/version/version.hpp.in"
 include(GNUInstallDirs)
 
 # TARGET LIBRARY STRN
-set(target_name ${PROJECT_NAME})
+set(strn_object_target ${PROJECT_NAME}-object)
+set(strn_shared_target ${PROJECT_NAME})
+set(strn_static_target ${PROJECT_NAME}-static)
+set(export_name ${PROJECT_NAME})
 
 # add library
 file(GLOB_RECURSE target_header_files ${INCLUDE_DIRECTORY}/*)
 file(GLOB_RECURSE target_src_files ${SRC_DIRECTORY}/*)
-add_library(${target_name}-object OBJECT ${target_header_files} ${target_src_files})
-target_include_directories(${target_name}-object PUBLIC
+add_library(${strn_object_target} OBJECT ${target_header_files} ${target_src_files})
+target_include_directories(${strn_object_target} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${INCLUDE_DIRECTORY}>
     $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/${INCLUDE_DIRECTORY}>)
-set_property(TARGET ${target_name}-object PROPERTY POSITION_INDEPENDENT_CODE 1)
-if(${STRN_BUILD_SHARED_LIB})
-    add_library(${target_name} SHARED $<TARGET_OBJECTS:${target_name}-object>)
-    target_include_directories(${target_name} PUBLIC $<INSTALL_INTERFACE:${INCLUDE_DIRECTORY}>)
-endif()
-if(${STRN_BUILD_STATIC_LIB})
-    add_library(${target_name}-static STATIC $<TARGET_OBJECTS:${target_name}-object>)
-    target_include_directories(${target_name}-static PUBLIC $<INSTALL_INTERFACE:${INCLUDE_DIRECTORY}>)
-endif()
-
+set_property(TARGET ${strn_object_target} PROPERTY POSITION_INDEPENDENT_CODE 1)
 # compile options
 if(MSVC)
-    target_compile_options(${target_name} PRIVATE /Wall)
+    target_compile_options(${strn_object_target} PRIVATE /Wall)
 elseif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
-    target_compile_options(${target_name} PRIVATE -Wall -Wextra -pedantic)
+    target_compile_options(${strn_object_target} PRIVATE -Wall -Wextra -pedantic)
 endif()
 
-set_target_properties(${target_name}        PROPERTIES DEBUG_POSTFIX "-d")
-set_target_properties(${target_name}-static PROPERTIES DEBUG_POSTFIX "-d")
+if(${STRN_BUILD_SHARED_LIB})
+    add_library(${strn_shared_target} SHARED $<TARGET_OBJECTS:${strn_object_target}>)
+    target_include_directories(${strn_shared_target} PUBLIC $<INSTALL_INTERFACE:${INCLUDE_DIRECTORY}>)
+    set_target_properties(${strn_shared_target} PROPERTIES DEBUG_POSTFIX "-d")
+endif()
+
+if(${STRN_BUILD_STATIC_LIB})
+    add_library(${strn_static_target} STATIC $<TARGET_OBJECTS:${strn_object_target}>)
+    target_include_directories(${strn_static_target} PUBLIC $<INSTALL_INTERFACE:${INCLUDE_DIRECTORY}>)
+    set_target_properties(${strn_static_target} PROPERTIES DEBUG_POSTFIX "-d")
+endif()
 
 #-----
 
 # INSTALL
-install(TARGETS ${target_name} ${target_name}-static EXPORT ${target_name})
+install(TARGETS ${strn_shared_target} ${strn_static_target} EXPORT ${export_name})
 install(DIRECTORY ${INCLUDE_DIRECTORY}/${PROJECT_NAME} DESTINATION ${INCLUDE_DIRECTORY})
 install(DIRECTORY ${PROJECT_BINARY_DIR}/${INCLUDE_DIRECTORY}/${PROJECT_NAME} DESTINATION ${INCLUDE_DIRECTORY})
-install(EXPORT ${target_name} DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
+install(EXPORT ${export_name} DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
 
 include(CMakePackageConfigHelpers)
 
