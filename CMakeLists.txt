@@ -63,18 +63,20 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 endif()
 
 #-----
-## STRN PROJECT CONF
+## PROJECT CONF
 
 # OPTIONS
-option(STRN_BUILD_SHARED_LIB "Indicates if we build a SHARED library." ON)
-option(STRN_BUILD_STATIC_LIB "Indicates if we build a STATIC library." ON)
-option(STRN_BUILD_TESTS "Indicates if we build the tests or not." OFF)
-option(STRN_BUILD_EXAMPLES "Indicates if we build the examples or not." OFF)
+option(${PROJECT_NAME}_BUILD_SHARED_LIB "Indicates if we build a SHARED library." ON)
+option(${PROJECT_NAME}_BUILD_STATIC_LIB "Indicates if we build a STATIC library." ON)
+option(${PROJECT_NAME}_BUILD_TESTS "Indicates if we build the tests or not." OFF)
+option(${PROJECT_NAME}_BUILD_EXAMPLES "Indicates if we build the examples or not." OFF)
 
 # OUTPUT PATHS
-set(RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BUILD_TYPE}/bin)
-set(LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BUILD_TYPE}/lib)
-set(ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BUILD_TYPE}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BUILD_TYPE}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BUILD_TYPE}/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BUILD_TYPE}/lib)
+
+cmake_print_variables(RUNTIME_OUTPUT_DIRECTORY LIBRARY_OUTPUT_DIRECTORY ARCHIVE_OUTPUT_DIRECTORY)
 
 # PRINT STATUS
 message(STATUS "PROJECT: ${PROJECT_NAME} v${PROJECT_VERSION}")
@@ -95,57 +97,57 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/version/version.hpp.in"
 
 include(GNUInstallDirs)
 
-# TARGET LIBRARY STRN
-set(strn_object_target ${PROJECT_NAME}-object)
-set(strn_shared_target ${PROJECT_NAME})
-set(strn_static_target ${PROJECT_NAME}-static)
+# TARGET LIBRARY
+set(project_object_target ${PROJECT_NAME}-object)
+set(project_shared_target ${PROJECT_NAME})
+set(project_static_target ${PROJECT_NAME}-static)
 set(export_name ${PROJECT_NAME})
 
 # add library
 file(GLOB_RECURSE target_header_files ${INCLUDE_DIRECTORY}/*)
 file(GLOB_RECURSE target_src_files ${SRC_DIRECTORY}/*)
-add_library(${strn_object_target} OBJECT ${target_header_files} ${target_src_files})
-target_include_directories(${strn_object_target} PUBLIC
+add_library(${project_object_target} OBJECT ${target_header_files} ${target_src_files})
+target_include_directories(${project_object_target} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${INCLUDE_DIRECTORY}>
     $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/${INCLUDE_DIRECTORY}>)
-set_property(TARGET ${strn_object_target} PROPERTY POSITION_INDEPENDENT_CODE 1)
+set_property(TARGET ${project_object_target} PROPERTY POSITION_INDEPENDENT_CODE 1)
 # compile options
 if(MSVC)
-    target_compile_options(${strn_object_target} PRIVATE /Wall)
+    target_compile_options(${project_object_target} PRIVATE /Wall)
 elseif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
-    target_compile_options(${strn_object_target} PRIVATE -Wall -Wextra -pedantic)
+    target_compile_options(${project_object_target} PRIVATE -Wall -Wextra -pedantic)
 endif()
 
-if(${STRN_BUILD_SHARED_LIB})
-    add_library(${strn_shared_target} SHARED $<TARGET_OBJECTS:${strn_object_target}>)
-    target_include_directories(${strn_shared_target} PUBLIC $<INSTALL_INTERFACE:${INCLUDE_DIRECTORY}>)
-    set_target_properties(${strn_shared_target} PROPERTIES DEBUG_POSTFIX "-d")
+if(${${PROJECT_NAME}_BUILD_SHARED_LIB})
+    add_library(${project_shared_target} SHARED $<TARGET_OBJECTS:${project_object_target}>)
+    target_include_directories(${project_shared_target} PUBLIC $<INSTALL_INTERFACE:${INCLUDE_DIRECTORY}>)
+    set_target_properties(${project_shared_target} PROPERTIES DEBUG_POSTFIX "-d")
 endif()
 
-if(${STRN_BUILD_STATIC_LIB})
-    add_library(${strn_static_target} STATIC $<TARGET_OBJECTS:${strn_object_target}>)
-    target_include_directories(${strn_static_target} PUBLIC $<INSTALL_INTERFACE:${INCLUDE_DIRECTORY}>)
-    set_target_properties(${strn_static_target} PROPERTIES DEBUG_POSTFIX "-d")
+if(${${PROJECT_NAME}_BUILD_STATIC_LIB})
+    add_library(${project_static_target} STATIC $<TARGET_OBJECTS:${project_object_target}>)
+    target_include_directories(${project_static_target} PUBLIC $<INSTALL_INTERFACE:${INCLUDE_DIRECTORY}>)
+    set_target_properties(${project_static_target} PROPERTIES DEBUG_POSTFIX "-d")
 endif()
 
 #-----
 
 # INSTALL
-install(TARGETS ${strn_shared_target} ${strn_static_target} EXPORT ${export_name})
+install(TARGETS ${project_shared_target} ${project_static_target} EXPORT ${export_name})
 install(DIRECTORY ${INCLUDE_DIRECTORY}/${PROJECT_NAME} DESTINATION ${INCLUDE_DIRECTORY})
 install(DIRECTORY ${PROJECT_BINARY_DIR}/${INCLUDE_DIRECTORY}/${PROJECT_NAME} DESTINATION ${INCLUDE_DIRECTORY})
 install(EXPORT ${export_name} DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
 
 include(CMakePackageConfigHelpers)
 
-configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/strn-config.cmake.in
-                             "${CMAKE_CURRENT_BINARY_DIR}/strn-config.cmake"
+configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}-config.cmake.in
+                             "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
                              INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
                              NO_SET_AND_CHECK_MACRO
                              NO_CHECK_REQUIRED_COMPONENTS_MACRO)
 
-write_basic_package_version_file("${CMAKE_CURRENT_BINARY_DIR}/strn-config-version.cmake"
-    VERSION ${STRN_VERSION}
+write_basic_package_version_file("${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake"
+    VERSION ${project_VERSION}
     COMPATIBILITY SameMajorVersion)
 
 install(FILES
@@ -156,7 +158,7 @@ install(FILES
 #-----
 
 # EXAMPLES
-if(${STRN_BUILD_EXAMPLES})
+if(${${PROJECT_NAME}_BUILD_EXAMPLES})
     set(PROGRAMS_DIRECTORY example)
     set(RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PROGRAMS_DIRECTORY})
     file(GLOB programs_cpp_files "${PROGRAMS_DIRECTORY}/*.cpp")
@@ -173,7 +175,7 @@ endif()
 #-----
 
 # TESTS
-if(${STRN_BUILD_TESTS})
+if(${${PROJECT_NAME}_BUILD_TESTS})
     enable_testing()
     set(PROGRAMS_DIRECTORY test)
     set(RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PROGRAMS_DIRECTORY})
@@ -197,9 +199,9 @@ set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${CMAKE_PROJECT_NAME}")
 set(CPACK_PACKAGE_VENDOR              "Aymeric Pellé")
 set(CPACK_PACKAGE_DESCRIPTION_FILE    "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
 set(CPACK_RESOURCE_FILE_LICENSE       "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.md")
-set(CPACK_PACKAGE_VERSION_MAJOR       "${STRN_VERSION_MAJOR}")
-set(CPACK_PACKAGE_VERSION_MINOR       "${STRN_VERSION_MINOR}")
-set(CPACK_PACKAGE_VERSION_PATCH       "${STRN_VERSION_PATCH}")
+set(CPACK_PACKAGE_VERSION_MAJOR       "${project_VERSION_MAJOR}")
+set(CPACK_PACKAGE_VERSION_MINOR       "${project_VERSION_MINOR}")
+set(CPACK_PACKAGE_VERSION_PATCH       "${project_VERSION_PATCH}")
 set(CPACK_PACKAGE_INSTALL_DIRECTORY   "${CMAKE_PROJECT_NAME}")
 #if(WIN32 AND NOT UNIX)
 #  set(CPACK_NSIS_DISPLAY_NAME         "${CPACK_PACKAGE_INSTALL_DIRECTORY}")
