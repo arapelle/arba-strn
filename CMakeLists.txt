@@ -22,8 +22,32 @@ unset(parent_bin_dir)
 unset(bin_dir_while)
 unset(bin_dir)
 
+#-----
+
 # PROJECT
-project(strn CXX)
+
+if(EXISTS "${CMAKE_SOURCE_DIR}/project_desc.txt")
+    file(STRINGS "project_desc.txt" lines)
+    list(LENGTH lines line_count)
+    if(${line_count} GREATER_EQUAL 0)
+        list(GET lines 0 pdesc_project_name)
+        list(GET lines 1 pdesc_version)
+        list(GET lines 2 pdesc_description)
+        list(GET lines 3 pdesc_homepage_url)
+    else()
+        message(FATAL_ERROR "project_desc.txt does not have all required information!")
+    endif()
+else()
+    message(FATAL_ERROR "project_desc.txt not found!")
+endif()
+
+project(${pdesc_project_name} VERSION ${pdesc_version} DESCRIPTION "${pdesc_description}" HOMEPAGE_URL "${pdesc_homepage_url}"
+        LANGUAGES CXX)
+
+unset(pdesc_project_name)
+unset(pdesc_version)
+unset(pdesc_description)
+unset(pdesc_homepage_url)
 
 #-----
 ## C++ PROJECT CONF
@@ -32,22 +56,14 @@ project(strn CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Build type
-set(default_build_type "Release")
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-  message(STATUS "Setting build type to '${default_build_type}' as none was specified.")
-  set(CMAKE_BUILD_TYPE "${default_build_type}" CACHE STRING "Choose the type of build." FORCE)
+  message(STATUS "Setting build type to 'Release' as none was specified.")
+  set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build." FORCE)
   set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
 
 #-----
 ## STRN PROJECT CONF
-
-# VERSION
-set(STRN_VERSION_MAJOR 0)
-set(STRN_VERSION_MINOR 1)
-set(STRN_VERSION_PATCH 0)
-set(STRN_VERSION ${STRN_VERSION_MAJOR}.${STRN_VERSION_MINOR}.${STRN_VERSION_PATCH})
-set(STRN_VERSION_COMMENT "strn::string64 created.")
 
 # OPTIONS
 option(STRN_BUILD_SHARED_LIB "Indicates if we build a SHARED library." ON)
@@ -58,9 +74,10 @@ option(STRN_BUILD_EXAMPLES "Indicates if we build the examples or not." OFF)
 # OUTPUT PATHS
 set(RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BUILD_TYPE}/bin)
 set(LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BUILD_TYPE}/lib)
+set(ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BUILD_TYPE}/lib)
 
 # PRINT STATUS
-message(STATUS "PROJECT: ${PROJECT_NAME} v${STRN_VERSION}")
+message(STATUS "PROJECT: ${PROJECT_NAME} v${PROJECT_VERSION}")
 message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
 message(STATUS "CMAKE_CXX_COMPILER: ${CMAKE_CXX_COMPILER}")
 
