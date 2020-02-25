@@ -5,7 +5,8 @@ The purpose is to provide a short string class (8 bytes max) whose hash is trivi
 
 # Install #
 ## Requirements ##
-You need a C++17 compiler (ex: g++-9).
+- A C++17 compiler (ex: g++-9)
+- CMake 3.8 or later
 
 ## Quick Install ##
 There is a cmake script at the root of the project which builds the library in *Release* mode and install it (default options are used).
