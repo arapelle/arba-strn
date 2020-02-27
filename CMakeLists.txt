@@ -115,7 +115,7 @@ endif()
 if(${${PROJECT_NAME}_BUILD_SHARED_LIB})
     add_library(${project_shared_target} SHARED $<TARGET_OBJECTS:${project_object_target}>)
     target_include_directories(${project_shared_target} PUBLIC $<INSTALL_INTERFACE:include>)
-    set_target_properties(${project_shared_target} PROPERTIES DEBUG_POSTFIX "-d")
+    set_target_properties(${project_shared_target} PROPERTIES DEBUG_POSTFIX "-d" SOVERSION ${PROJECT_VERSION})
 endif()
 
 if(${${PROJECT_NAME}_BUILD_STATIC_LIB})
