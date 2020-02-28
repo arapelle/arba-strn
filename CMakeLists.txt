@@ -1,26 +1,13 @@
 cmake_minimum_required(VERSION 3.8)
 
-include(CMakePrintHelpers)
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
-# CHECK CMAKE_BINARY_DIR
-set(bin_dir ${CMAKE_BINARY_DIR})
-set(bin_dir_while TRUE)
-while(${bin_dir_while})
-    if(${bin_dir} STREQUAL ${CMAKE_SOURCE_DIR})
-        message(STATUS "CMAKE_SOURCE_DIR: ${CMAKE_SOURCE_DIR}")
-        message(STATUS "CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}")
-        message(FATAL_ERROR "CMAKE_BINARY_DIR must not be located in CMAKE_SOURCE_DIR!")
-    endif()
-    get_filename_component(parent_bin_dir ${bin_dir} DIRECTORY)
-    if(${parent_bin_dir} STREQUAL ${bin_dir})
-        set(bin_dir_while FALSE)
-    else()
-        set(bin_dir ${parent_bin_dir})
-    endif()
-endwhile()
-unset(parent_bin_dir)
-unset(bin_dir_while)
-unset(bin_dir)
+# CMake includes
+include(CMakePrintHelpers)
+# Project include
+include(utils)
+
+check_cmake_binary_dir()
 
 #-----
 
