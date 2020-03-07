@@ -1,11 +1,12 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.16)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
 # CMake includes
 include(CMakePrintHelpers)
 # Project include
-include(utils)
+include(Utility)
+include(CppLibraryProject)
 
 check_cmake_binary_dir()
 
@@ -68,6 +69,11 @@ message(STATUS "PROJECT : ${PROJECT_NAME} ${PROJECT_VERSION}")
 message(STATUS "BUILD   : ${CMAKE_BUILD_TYPE}")
 message(STATUS "CPPCOMP : ${CMAKE_CXX_COMPILER} ${CMAKE_CXX_COMPILER_VERSION}")
 
+
+if(NOT ${${PROJECT_NAME}_BUILD_SHARED_LIB} AND NOT ${${PROJECT_NAME}_BUILD_STATIC_LIB})
+    message(FATAL_ERROR "You did not choose which target(s) to build (SHARED, STATIC).")
+endif()
+
 #-----
 
 # GENERATE version.hpp
@@ -89,7 +95,7 @@ file(GLOB_RECURSE target_header_files include/*)
 file(GLOB_RECURSE target_src_files src/*)
 add_library(${project_object_target} OBJECT ${target_header_files} ${target_src_files})
 target_include_directories(${project_object_target} PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
     $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>)
 set_property(TARGET ${project_object_target} PROPERTY POSITION_INDEPENDENT_CODE 1)
 # compile options
@@ -103,18 +109,20 @@ if(${${PROJECT_NAME}_BUILD_SHARED_LIB})
     add_library(${project_shared_target} SHARED $<TARGET_OBJECTS:${project_object_target}>)
     target_include_directories(${project_shared_target} PUBLIC $<INSTALL_INTERFACE:include>)
     set_target_properties(${project_shared_target} PROPERTIES DEBUG_POSTFIX "-d" SOVERSION ${PROJECT_VERSION})
+    set(project_targets ${project_targets} ${project_shared_target})
 endif()
 
 if(${${PROJECT_NAME}_BUILD_STATIC_LIB})
     add_library(${project_static_target} STATIC $<TARGET_OBJECTS:${project_object_target}>)
     target_include_directories(${project_static_target} PUBLIC $<INSTALL_INTERFACE:include>)
     set_target_properties(${project_static_target} PROPERTIES DEBUG_POSTFIX "-d")
+    set(project_targets ${project_targets} ${project_static_target})
 endif()
 
 #-----
 
 # INSTALL
-install(TARGETS ${project_shared_target} ${project_static_target} EXPORT ${export_name})
+install(TARGETS ${project_targets} EXPORT ${export_name})
 install(DIRECTORY include/${PROJECT_NAME} DESTINATION include)
 install(DIRECTORY ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME} DESTINATION include)
 install(EXPORT ${export_name} DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
@@ -156,20 +164,9 @@ endif()
 #-----
 
 # TESTS
-if(${${PROJECT_NAME}_BUILD_TESTS})
+if(IS_DIRECTORY "${PROJECT_SOURCE_DIR}/test")
     enable_testing()
-    set(PROGRAMS_DIRECTORY test)
-    set(RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PROGRAMS_DIRECTORY})
-    file(GLOB programs_cpp_files "${PROGRAMS_DIRECTORY}/*.cpp")
-    foreach(filename ${programs_cpp_files})
-        get_filename_component(program_exe_name ${filename} NAME_WE)
-        add_executable(${program_exe_name} ${filename})
-        target_link_libraries(${program_exe_name} strn)
-        target_include_directories(${program_exe_name} PUBLIC
-            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>)
-        add_test("${program_exe_name}" ${EXECUTABLE_OUTPUT_PATH}/${program_exe_name})
-    endforeach()
+    add_subdirectory(test)
 endif()
 
 #-----
