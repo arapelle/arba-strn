@@ -56,8 +56,12 @@ endif()
 # OPTIONS
 option(${PROJECT_NAME}_BUILD_SHARED_LIB "Indicates if we build a SHARED library." ON)
 option(${PROJECT_NAME}_BUILD_STATIC_LIB "Indicates if we build a STATIC library." ON)
-option(${PROJECT_NAME}_BUILD_TESTS "Indicates if we build the tests or not." OFF)
-option(${PROJECT_NAME}_BUILD_EXAMPLES "Indicates if we build the examples or not." OFF)
+if(EXISTS "${PROJECT_SOURCE_DIR}/test/CMakeLists.txt")
+    option(${PROJECT_NAME}_BUILD_TESTS "Indicates if we build the tests or not." OFF)
+endif()
+if(EXISTS "${PROJECT_SOURCE_DIR}/example/CMakeLists.txt")
+    option(${PROJECT_NAME}_BUILD_EXAMPLES "Indicates if we build the examples or not." OFF)
+endif()
 
 # OUTPUT PATHS
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BUILD_TYPE}/bin)
@@ -147,18 +151,14 @@ install(FILES
 #-----
 
 # EXAMPLES
-if(IS_DIRECTORY "${PROJECT_SOURCE_DIR}/example")
-    if(${${PROJECT_NAME}_BUILD_EXAMPLES})
-        add_subdirectory(example)
-    endif()
+if(EXISTS "${PROJECT_SOURCE_DIR}/example/CMakeLists.txt" AND ${${PROJECT_NAME}_BUILD_EXAMPLES})
+    add_subdirectory(example)
 endif()
 
 # TESTS
-if(IS_DIRECTORY "${PROJECT_SOURCE_DIR}/test")
+if(EXISTS "${PROJECT_SOURCE_DIR}/test/CMakeLists.txt" AND ${${PROJECT_NAME}_BUILD_TESTS})
     enable_testing()
-    if(${${PROJECT_NAME}_BUILD_TESTS})
-        add_subdirectory(test)
-    endif()
+    add_subdirectory(test)
 endif()
 
 #-----
