@@ -129,8 +129,8 @@ install(EXPORT ${export_name} DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJEC
 
 include(CMakePackageConfigHelpers)
 
-configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}-config.cmake.in
-                             "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
+configure_package_config_file(${PROJECT_SOURCE_DIR}/${PROJECT_NAME}-config.cmake.in
+                             "${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
                              INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
                              NO_SET_AND_CHECK_MACRO
                              NO_CHECK_REQUIRED_COMPONENTS_MACRO)
@@ -147,26 +147,18 @@ install(FILES
 #-----
 
 # EXAMPLES
-if(${${PROJECT_NAME}_BUILD_EXAMPLES})
-    set(PROGRAMS_DIRECTORY example)
-    set(RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PROGRAMS_DIRECTORY})
-    file(GLOB programs_cpp_files "${PROGRAMS_DIRECTORY}/*.cpp")
-    foreach(filename ${programs_cpp_files})
-        get_filename_component(program_exe_name ${filename} NAME_WE)
-        add_executable(${program_exe_name} ${filename})
-        target_link_libraries(${program_exe_name} strn)
-        target_include_directories(${program_exe_name} PUBLIC
-            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>)
-    endforeach()
+if(IS_DIRECTORY "${PROJECT_SOURCE_DIR}/example")
+    if(${${PROJECT_NAME}_BUILD_EXAMPLES})
+        add_subdirectory(example)
+    endif()
 endif()
-
-#-----
 
 # TESTS
 if(IS_DIRECTORY "${PROJECT_SOURCE_DIR}/test")
     enable_testing()
-    add_subdirectory(test)
+    if(${${PROJECT_NAME}_BUILD_TESTS})
+        add_subdirectory(test)
+    endif()
 endif()
 
 #-----
