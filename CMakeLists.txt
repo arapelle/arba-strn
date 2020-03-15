@@ -52,7 +52,6 @@ message(STATUS "PROJECT : ${PROJECT_NAME} v${PROJECT_VERSION}")
 message(STATUS "BUILD   : ${CMAKE_BUILD_TYPE}")
 message(STATUS "CPPCOMP : ${CMAKE_CXX_COMPILER} ${CMAKE_CXX_COMPILER_VERSION}")
 
-
 if(NOT ${${PROJECT_NAME}_BUILD_SHARED_LIB} AND NOT ${${PROJECT_NAME}_BUILD_STATIC_LIB})
     message(FATAL_ERROR "You did not choose which target(s) to build (SHARED, STATIC).")
 endif()
@@ -60,8 +59,12 @@ endif()
 #-----
 
 # GENERATE version.hpp
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/version/version.hpp.in"
-               "${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}/version.hpp")
+if(EXISTS "${PROJECT_SOURCE_DIR}/cmake.in/version.hpp.in")
+    configure_file("${PROJECT_SOURCE_DIR}/cmake.in/version.hpp.in"
+                   "${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}/version.hpp")
+else()
+    message(FATAL_ERROR "Version header file not found: missing ${PROJECT_SOURCE_DIR}/cmake.in/version.hpp.in")
+endif()
 
 #-----
 
@@ -127,19 +130,19 @@ install(DIRECTORY include/${PROJECT_NAME} DESTINATION include)
 install(DIRECTORY ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME} DESTINATION include)
 install(EXPORT ${export_name} DESTINATION ${relative_install_cmake_package_dir})
 
-configure_package_config_file(${PROJECT_SOURCE_DIR}/${PROJECT_NAME}-config.cmake.in
+configure_package_config_file(${PROJECT_SOURCE_DIR}/cmake.in/${PROJECT_NAME}-config.cmake.in
                              "${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
                              INSTALL_DESTINATION ${install_cmake_package_dir}
                              NO_SET_AND_CHECK_MACRO
                              NO_CHECK_REQUIRED_COMPONENTS_MACRO)
 
-write_basic_package_version_file("${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake"
+write_basic_package_version_file("${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake"
     VERSION ${PROJECT_VERSION}
     COMPATIBILITY SameMajorVersion)
 
 install(FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake
-    ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake
+    ${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config.cmake
+    ${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake
     DESTINATION ${install_cmake_package_dir})
 
 install_cmake_uninstall_script(${install_cmake_package_dir})

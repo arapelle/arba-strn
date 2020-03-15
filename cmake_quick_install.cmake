@@ -1,4 +1,4 @@
-# cmake -P quick_install.cmake
+# cmake -P cmake_quick_install.cmake
 
 set(project "strn")
 
