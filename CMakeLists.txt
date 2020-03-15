@@ -10,14 +10,9 @@ include(CppLibraryProject)
 
 check_cmake_binary_dir()
 
-#-----
+set_build_type_if_undefined()
 
-# Build type
-if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-  message(STATUS "Setting build type to 'Release' as none was specified.")
-  set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build." FORCE)
-  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
-endif()
+#-----
 
 # PROJECT
 

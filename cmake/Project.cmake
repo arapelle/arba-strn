@@ -17,6 +17,14 @@ function(check_cmake_binary_dir)
     endwhile()
 endfunction()
 
+function(set_build_type_if_undefined)
+    if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+      message(STATUS "Setting build type to 'Release' as none was specified.")
+      set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build." FORCE)
+      set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+    endif()
+endfunction()
+
 function(install_cmake_uninstall_script install_cmake_package_dir)
     install(CODE
         "
