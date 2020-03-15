@@ -146,6 +146,40 @@ if(EXISTS "${PROJECT_SOURCE_DIR}/test/CMakeLists.txt" AND ${${PROJECT_NAME}_BUIL
     add_subdirectory(test)
 endif()
 
+install(CODE
+    "
+    message(STATUS \"Installing: ${install_cmake_package_dir}/cmake_uninstall.cmake\")
+    if(DEFINED CMAKE_INSTALL_MANIFEST_FILES)
+        set(files \${CMAKE_INSTALL_MANIFEST_FILES} ${install_cmake_package_dir}/cmake_uninstall.cmake)
+        file(APPEND ${install_cmake_package_dir}/cmake_uninstall.cmake
+        \"
+        message(STATUS \\\"Uninstall ${PROJECT_NAME} v${PROJECT_VERSION} ${CMAKE_BUILD_TYPE}\\\")
+        foreach(file \${files})
+            while(NOT \\\${file} STREQUAL \${CMAKE_INSTALL_PREFIX})
+                if(EXISTS \\\${file} OR IS_SYMLINK \\\${file})
+                    if(IS_DIRECTORY \\\${file})
+                        file(GLOB dir_files \\\${file}/*)
+                        list(LENGTH dir_files number_of_files)
+                        if(\\\${number_of_files} EQUAL 0)
+                          message(STATUS \\\"Removing  dir: \\\${file}\\\")
+                          file(REMOVE_RECURSE \\\${file})
+                        endif()
+                    else()
+                        message(STATUS \\\"Removing file: \\\${file}\\\")
+                        file(REMOVE \\\${file})
+                    endif()
+                endif()
+                get_filename_component(file \\\${file} DIRECTORY)
+            endwhile()
+        endforeach()
+        \"
+        )
+    else()
+        message(ERROR \"cmake_uninstall.cmake script cannot be created!\")
+    endif()
+ "
+)
+
 #-----
 
 # PACKAGE
