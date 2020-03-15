@@ -58,7 +58,7 @@ endif()
 
 #-----
 
-# GENERATE version.hpp
+# GENERATE HEADER VERSION FILE
 if(EXISTS "${PROJECT_SOURCE_DIR}/cmake.in/version.hpp.in")
     configure_file("${PROJECT_SOURCE_DIR}/cmake.in/version.hpp.in"
                    "${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}/version.hpp")
@@ -70,13 +70,12 @@ endif()
 
 include(GNUInstallDirs)
 
-# TARGET LIBRARY
+# ADD TARGET LIBRARY
 set(project_object_target ${PROJECT_NAME}-object)
 set(project_shared_target ${PROJECT_NAME})
 set(project_static_target ${PROJECT_NAME}-static)
 set(export_name ${PROJECT_NAME})
 
-# add library
 file(GLOB_RECURSE target_header_files include/*)
 file(GLOB_RECURSE target_src_files src/*)
 add_library(${project_object_target} OBJECT ${target_header_files} ${target_src_files})
@@ -110,6 +109,8 @@ endif()
 if(EXISTS "${PROJECT_SOURCE_DIR}/example/CMakeLists.txt" AND ${${PROJECT_NAME}_BUILD_EXAMPLES})
     add_subdirectory(example)
 endif()
+
+#-----
 
 # TESTS
 if(EXISTS "${PROJECT_SOURCE_DIR}/test/CMakeLists.txt" AND ${${PROJECT_NAME}_BUILD_TESTS})
