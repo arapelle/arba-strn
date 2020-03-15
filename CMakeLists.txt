@@ -19,11 +19,11 @@ set_build_type_if_undefined()
 project(strn
         VERSION 0.1.0
         DESCRIPTION "A C++ library providing short trivially comparable string classes whose hash are trivially computable."
-        HOMEPAGE_URL "https://github.com/arapelle/strn/tree/master/include/strn"
+        HOMEPAGE_URL "https://github.com/arapelle/strn"
         LANGUAGES CXX)
 
 #-----
-## C++ PROJECT CONF
+## C++ CONF
 
 # C++ Standard
 set(CMAKE_CXX_STANDARD 17)
@@ -138,8 +138,8 @@ write_basic_package_version_file("${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-co
     COMPATIBILITY SameMajorVersion)
 
 install(FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/strn-config.cmake
-    ${CMAKE_CURRENT_BINARY_DIR}/strn-config-version.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake
     DESTINATION ${install_cmake_package_dir})
 
 install_cmake_uninstall_script(${install_cmake_package_dir})
