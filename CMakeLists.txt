@@ -12,30 +12,20 @@ check_cmake_binary_dir()
 
 #-----
 
-# PROJECT
-
-if(EXISTS "${CMAKE_SOURCE_DIR}/project_desc.txt")
-    file(STRINGS "project_desc.txt" lines)
-    list(LENGTH lines line_count)
-    if(${line_count} GREATER_EQUAL 0)
-        list(GET lines 0 pdesc_project_name)
-        list(GET lines 1 pdesc_version)
-        list(GET lines 2 pdesc_description)
-        list(GET lines 3 pdesc_homepage_url)
-    else()
-        message(FATAL_ERROR "project_desc.txt does not have all required information!")
-    endif()
-else()
-    message(FATAL_ERROR "project_desc.txt not found!")
+# Build type
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+  message(STATUS "Setting build type to 'Release' as none was specified.")
+  set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build." FORCE)
+  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
 
-project(${pdesc_project_name} VERSION ${pdesc_version} DESCRIPTION "${pdesc_description}" HOMEPAGE_URL "${pdesc_homepage_url}"
-        LANGUAGES CXX)
+# PROJECT
 
-unset(pdesc_project_name)
-unset(pdesc_version)
-unset(pdesc_description)
-unset(pdesc_homepage_url)
+project(strn
+    VERSION 0.1.0
+    DESCRIPTION "A C++ library providing short trivially comparable string classes whose hash are trivially computable."
+    HOMEPAGE_URL "https://github.com/arapelle/strn/tree/master/include/strn"
+    LANGUAGES CXX)
 
 #-----
 ## C++ PROJECT CONF
@@ -43,12 +33,6 @@ unset(pdesc_homepage_url)
 # C++ Standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-# Build type
-if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-  message(STATUS "Setting build type to 'Release' as none was specified.")
-  set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build." FORCE)
-  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
-endif()
 
 #-----
 ## PROJECT CONF
@@ -69,7 +53,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BUILD_TYPE}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BUILD_TYPE}/lib)
 
 # PRINT STATUS
-message(STATUS "PROJECT : ${PROJECT_NAME} ${PROJECT_VERSION}")
+message(STATUS "PROJECT : ${PROJECT_NAME} v${PROJECT_VERSION}")
 message(STATUS "BUILD   : ${CMAKE_BUILD_TYPE}")
 message(STATUS "CPPCOMP : ${CMAKE_CXX_COMPILER} ${CMAKE_CXX_COMPILER_VERSION}")
 
@@ -133,20 +117,21 @@ install(EXPORT ${export_name} DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJEC
 
 include(CMakePackageConfigHelpers)
 
+set(install_cmake_package_dir "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
 configure_package_config_file(${PROJECT_SOURCE_DIR}/${PROJECT_NAME}-config.cmake.in
                              "${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
-                             INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
+                             INSTALL_DESTINATION ${install_cmake_package_dir}
                              NO_SET_AND_CHECK_MACRO
                              NO_CHECK_REQUIRED_COMPONENTS_MACRO)
 
 write_basic_package_version_file("${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake"
-    VERSION ${project_VERSION}
+    VERSION ${PROJECT_VERSION}
     COMPATIBILITY SameMajorVersion)
 
 install(FILES
     ${CMAKE_CURRENT_BINARY_DIR}/strn-config.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/strn-config-version.cmake
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
+    DESTINATION ${install_cmake_package_dir})
 
 #-----
 

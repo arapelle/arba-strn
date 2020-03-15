@@ -1,4 +1,0 @@
-strn
-0.1.0
-A C++ library providing short trivially comparable string classes whose hash are trivially computable.
-https://github.com/arapelle/strn/tree/master/include/strn
