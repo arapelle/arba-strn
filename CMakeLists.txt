@@ -17,10 +17,10 @@ set_build_type_if_undefined()
 # PROJECT
 
 project(strn
-    VERSION 0.1.0
-    DESCRIPTION "A C++ library providing short trivially comparable string classes whose hash are trivially computable."
-    HOMEPAGE_URL "https://github.com/arapelle/strn/tree/master/include/strn"
-    LANGUAGES CXX)
+        VERSION 0.1.0
+        DESCRIPTION "A C++ library providing short trivially comparable string classes whose hash are trivially computable."
+        HOMEPAGE_URL "https://github.com/arapelle/strn/tree/master/include/strn"
+        LANGUAGES CXX)
 
 #-----
 ## C++ PROJECT CONF
@@ -81,7 +81,6 @@ target_include_directories(${project_object_target} PUBLIC
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
     $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>)
 set_property(TARGET ${project_object_target} PROPERTY POSITION_INDEPENDENT_CODE 1)
-# compile options
 if(MSVC)
     target_compile_options(${project_object_target} PRIVATE /Wall)
 elseif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
@@ -104,15 +103,30 @@ endif()
 
 #-----
 
+# EXAMPLES
+if(EXISTS "${PROJECT_SOURCE_DIR}/example/CMakeLists.txt" AND ${${PROJECT_NAME}_BUILD_EXAMPLES})
+    add_subdirectory(example)
+endif()
+
+# TESTS
+if(EXISTS "${PROJECT_SOURCE_DIR}/test/CMakeLists.txt" AND ${${PROJECT_NAME}_BUILD_TESTS})
+    enable_testing()
+    add_subdirectory(test)
+endif()
+
+#-----
+
 # INSTALL
+include(CMakePackageConfigHelpers)
+
+set(relative_install_cmake_package_dir "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
+set(install_cmake_package_dir "${CMAKE_INSTALL_PREFIX}/${relative_install_cmake_package_dir}")
+
 install(TARGETS ${project_targets} EXPORT ${export_name})
 install(DIRECTORY include/${PROJECT_NAME} DESTINATION include)
 install(DIRECTORY ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME} DESTINATION include)
-install(EXPORT ${export_name} DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
+install(EXPORT ${export_name} DESTINATION ${relative_install_cmake_package_dir})
 
-include(CMakePackageConfigHelpers)
-
-set(install_cmake_package_dir "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
 configure_package_config_file(${PROJECT_SOURCE_DIR}/${PROJECT_NAME}-config.cmake.in
                              "${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
                              INSTALL_DESTINATION ${install_cmake_package_dir}
@@ -127,17 +141,6 @@ install(FILES
     ${CMAKE_CURRENT_BINARY_DIR}/strn-config.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/strn-config-version.cmake
     DESTINATION ${install_cmake_package_dir})
-
-# EXAMPLES
-if(EXISTS "${PROJECT_SOURCE_DIR}/example/CMakeLists.txt" AND ${${PROJECT_NAME}_BUILD_EXAMPLES})
-    add_subdirectory(example)
-endif()
-
-# TESTS
-if(EXISTS "${PROJECT_SOURCE_DIR}/test/CMakeLists.txt" AND ${${PROJECT_NAME}_BUILD_TESTS})
-    enable_testing()
-    add_subdirectory(test)
-endif()
 
 install_cmake_uninstall_script(${install_cmake_package_dir})
 
