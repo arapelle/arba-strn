@@ -60,9 +60,8 @@ function(add_cpp_library)
     #----------------------------------------#
     # Declare args
     set(options "")
-    set(params "CXX_STANDARD")
+    set(params "CXX_STANDARD;INPUT_VERSION_HEADER;OUTPUT_VERSION_HEADER")
     set(lists "")
-#    cmake_print_variables(options params lists)
     # Parse args
     cmake_parse_arguments(PARSE_ARGV 0 "FARG" "${options}" "${params}" "${lists}")
     # Set default value if needed
@@ -112,12 +111,20 @@ function(add_cpp_library)
     #-----
 
     # GENERATE HEADER VERSION FILE
-    if(EXISTS "${PROJECT_SOURCE_DIR}/cmake/src/version.hpp.in")
-        configure_file("${PROJECT_SOURCE_DIR}/cmake/src/version.hpp.in"
-                       "${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}/version.hpp")
-    else()
-        message(FATAL_ERROR "Version header file not found: missing ${PROJECT_SOURCE_DIR}/cmake/src/version.hpp.in")
+    if(FARG_OUTPUT_VERSION_HEADER)
+        if(IS_ABSOLUTE ${FARG_OUTPUT_VERSION_HEADER})
+            message(FATAL_ERROR "Provide a relative path for generated version file!")
+        endif()
+        generate_version_header(INPUT_VERSION_HEADER ${FARG_INPUT_VERSION_HEADER}
+                                OUTPUT_VERSION_HEADER ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}/${FARG_OUTPUT_VERSION_HEADER})
     endif()
+
+#    if(EXISTS "${PROJECT_SOURCE_DIR}/cmake/src/version.hpp.in")
+#        configure_file("${PROJECT_SOURCE_DIR}/cmake/src/version.hpp.in"
+#                       "${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}/version.hpp")
+#    else()
+#        message(FATAL_ERROR "Version header file not found: missing ${PROJECT_SOURCE_DIR}/cmake/src/version.hpp.in")
+#    endif()
 
     #-----
 

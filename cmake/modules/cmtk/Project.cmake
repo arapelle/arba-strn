@@ -1,4 +1,8 @@
 
+list(PREPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
+include(Utility)
+list(POP_FRONT CMAKE_MODULE_PATH)
+
 function(check_cmake_binary_dir)
     set(bin_dir ${CMAKE_BINARY_DIR})
     set(bin_dir_while TRUE)
@@ -22,6 +26,43 @@ function(set_build_type_if_undefined)
       message(STATUS "Setting build type to 'Release' as none was specified.")
       set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build." FORCE)
       set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+    endif()
+endfunction()
+
+function(generate_default_version_header version_file)
+    to_upper_var_name(${PROJECT_NAME} upper_project_var_name)
+    cmake_print_variables(version_file)
+    file(WRITE ${version_file}
+         "#pragma once
+
+#define ${upper_project_var_name}_VERSION_MAJOR ${PROJECT_VERSION_MAJOR}
+#define ${upper_project_var_name}_VERSION_MINOR ${PROJECT_VERSION_MINOR}
+#define ${upper_project_var_name}_VERSION_PATCH ${PROJECT_VERSION_PATCH}
+#define ${upper_project_var_name}_VERSION \"${PROJECT_VERSION}\"
+"
+    )
+endfunction()
+
+function(generate_version_header)
+    #----------------------------------------#
+    # Declare args
+    set(options "")
+    set(params "INPUT_VERSION_HEADER;OUTPUT_VERSION_HEADER")
+    set(lists "")
+    # Parse args
+    cmake_parse_arguments(PARSE_ARGV 0 "FARG" "${options}" "${params}" "${lists}")
+    #----------------------------------------#
+
+    if(FARG_OUTPUT_VERSION_HEADER)
+        if(FARG_INPUT_VERSION_HEADER)
+            if(EXISTS ${FARG_INPUT_VERSION_HEADER} AND NOT IS_DIRECTORY ${FARG_INPUT_VERSION_HEADER})
+                configure_file(${FARG_INPUT_VERSION_HEADER} ${FARG_OUTPUT_VERSION_HEADER})
+            else()
+                message(FATAL_ERROR "${FARG_INPUT_VERSION_HEADER} does not exist.")
+            endif()
+        else()
+            generate_default_version_header(${FARG_OUTPUT_VERSION_HEADER})
+        endif()
     endif()
 endfunction()
 
