@@ -60,7 +60,7 @@ function(add_cpp_library)
     #----------------------------------------#
     # Declare args
     set(options "")
-    set(params "CXX_STANDARD;INPUT_VERSION_HEADER;OUTPUT_VERSION_HEADER")
+    set(params "CXX_STANDARD;INPUT_VERSION_HEADER;VERSION_HEADER")
     set(lists "")
     # Parse args
     cmake_parse_arguments(PARSE_ARGV 0 "FARG" "${options}" "${params}" "${lists}")
@@ -111,12 +111,12 @@ function(add_cpp_library)
     #-----
 
     # GENERATE HEADER VERSION FILE
-    if(FARG_OUTPUT_VERSION_HEADER)
-        if(IS_ABSOLUTE ${FARG_OUTPUT_VERSION_HEADER})
+    if(FARG_VERSION_HEADER)
+        if(IS_ABSOLUTE ${FARG_VERSION_HEADER})
             message(FATAL_ERROR "Provide a relative path for generated version file!")
         endif()
         generate_version_header(INPUT_VERSION_HEADER ${FARG_INPUT_VERSION_HEADER}
-                                OUTPUT_VERSION_HEADER ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}/${FARG_OUTPUT_VERSION_HEADER})
+                                VERSION_HEADER ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}/${FARG_VERSION_HEADER})
     endif()
 
 #    if(EXISTS "${PROJECT_SOURCE_DIR}/cmake/src/version.hpp.in")
