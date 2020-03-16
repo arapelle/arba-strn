@@ -1,7 +1,9 @@
 
+list(PREPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
 include(Project)
+list(POP_FRONT CMAKE_MODULE_PATH)
 
-function(add_cpp_library_project_examples)
+function(add_cpp_library_examples)
     set(example_output_dir ${CMAKE_BUILD_TYPE})
 
     get_property(project_targets DIRECTORY ${PROJECT_SOURCE_DIR} PROPERTY BUILDSYSTEM_TARGETS)
@@ -27,7 +29,7 @@ function(add_cpp_library_project_examples)
     endif()
 endfunction()
 
-function(add_cpp_library_project_tests)
+function(add_cpp_library_tests)
     set(test_output_dir ${CMAKE_BUILD_TYPE})
 
     get_property(project_targets DIRECTORY ${PROJECT_SOURCE_DIR} PROPERTY BUILDSYSTEM_TARGETS)
@@ -110,11 +112,11 @@ function(add_cpp_library)
     #-----
 
     # GENERATE HEADER VERSION FILE
-    if(EXISTS "${PROJECT_SOURCE_DIR}/cmake.in/version.hpp.in")
-        configure_file("${PROJECT_SOURCE_DIR}/cmake.in/version.hpp.in"
+    if(EXISTS "${PROJECT_SOURCE_DIR}/cmake/src/version.hpp.in")
+        configure_file("${PROJECT_SOURCE_DIR}/cmake/src/version.hpp.in"
                        "${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}/version.hpp")
     else()
-        message(FATAL_ERROR "Version header file not found: missing ${PROJECT_SOURCE_DIR}/cmake.in/version.hpp.in")
+        message(FATAL_ERROR "Version header file not found: missing ${PROJECT_SOURCE_DIR}/cmake/src/version.hpp.in")
     endif()
 
     #-----
@@ -182,7 +184,7 @@ function(add_cpp_library)
     install(DIRECTORY ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME} DESTINATION include)
     install(EXPORT ${export_name} DESTINATION ${relative_install_cmake_package_dir})
 
-    configure_package_config_file(${PROJECT_SOURCE_DIR}/cmake.in/${PROJECT_NAME}-config.cmake.in
+    configure_package_config_file(${PROJECT_SOURCE_DIR}/cmake/src/${PROJECT_NAME}-config.cmake.in
                                  "${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
                                  INSTALL_DESTINATION ${install_cmake_package_dir}
                                  NO_SET_AND_CHECK_MACRO
