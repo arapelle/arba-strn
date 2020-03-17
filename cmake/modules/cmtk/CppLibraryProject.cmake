@@ -68,13 +68,6 @@ function(add_cpp_library)
     if(NOT FARG_CXX_STANDARD)
         set(FARG_CXX_STANDARD 17)
     endif()
-    # Debug print
-#    message(STATUS "********")
-#    foreach(arg ${options} ${params} ${lists})
-#        cmake_print_variables(FARG_${arg})
-#    endforeach()
-#    cmake_print_variables(FARG_UNPARSED_ARGUMENTS)
-#    message(STATUS "********")
     #----------------------------------------#
 
     # Configure C++ standard
@@ -118,13 +111,6 @@ function(add_cpp_library)
         generate_version_header(INPUT_VERSION_HEADER ${FARG_INPUT_VERSION_HEADER}
                                 VERSION_HEADER ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}/${FARG_VERSION_HEADER})
     endif()
-
-#    if(EXISTS "${PROJECT_SOURCE_DIR}/cmake/src/version.hpp.in")
-#        configure_file("${PROJECT_SOURCE_DIR}/cmake/src/version.hpp.in"
-#                       "${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}/version.hpp")
-#    else()
-#        message(FATAL_ERROR "Version header file not found: missing ${PROJECT_SOURCE_DIR}/cmake/src/version.hpp.in")
-#    endif()
 
     #-----
 
@@ -191,7 +177,7 @@ function(add_cpp_library)
     install(DIRECTORY ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME} DESTINATION include)
     install(EXPORT ${export_name} DESTINATION ${relative_install_cmake_package_dir})
 
-    configure_package_config_file(${PROJECT_SOURCE_DIR}/cmake/src/${PROJECT_NAME}-config.cmake.in
+    configure_package_config_file(${PROJECT_SOURCE_DIR}/cmake/input/${PROJECT_NAME}-config.cmake.in
                                  "${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
                                  INSTALL_DESTINATION ${install_cmake_package_dir}
                                  NO_SET_AND_CHECK_MACRO
