@@ -76,31 +76,41 @@ endif()
 endfunction()
 
 function(add_public_cpp_library)
-    #----------------------------------------#
-    # Declare args
+    #-----
+    # Args
     set(options "BASIC_PACKAGE_CONFIG_FILE;VERBOSE_PACKAGE_CONFIG_FILE")
-    set(params "CXX_STANDARD;INPUT_VERSION_HEADER;VERSION_HEADER;INPUT_PACKAGE_CONFIG_FILE")
+    set(params "CXX_STANDARD;INPUT_VERSION_HEADER;VERSION_HEADER;INPUT_PACKAGE_CONFIG_FILE;INCLUDE_DIR;SRC_DIR;EXAMPLE_DIR;TEST_DIR")
     set(lists "")
+
     # Parse args
     cmake_parse_arguments(PARSE_ARGV 0 "FARG" "${options}" "${params}" "${lists}")
+
     # Set default value if needed
     if(NOT FARG_CXX_STANDARD)
         set(FARG_CXX_STANDARD 17)
     endif()
+    foreach(idir include src example test)
+        string(TOUPPER ${idir} uidir)
+        if(FARG_${uidir}_DIR)
+            set(${idir}_dir ${FARG_${uidir}_DIR})
+        else()
+            set(${idir}_dir ${idir})
+        endif()
+    endforeach()
+
     # Check args values
     if(NOT FARG_BASIC_PACKAGE_CONFIG_FILE AND NOT FARG_VERBOSE_PACKAGE_CONFIG_FILE AND NOT FARG_INPUT_PACKAGE_CONFIG_FILE)
         message(FATAL_ERROR "Package config file argument is missing. [BASIC_PACKAGE_CONFIG_FILE|VERBOSE_PACKAGE_CONFIG_FILE|INPUT_PACKAGE_CONFIG_FILE]")
     endif()
-    #----------------------------------------#
+    #-----
 
+    #-----
     # Configure C++ standard
     set(CMAKE_CXX_STANDARD ${FARG_CXX_STANDARD})
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
     #-----
-    ## PROJECT CONF
-
-    # OPTIONS
+    # Project options
     option(${PROJECT_NAME}_BUILD_SHARED_LIB "Indicates if we build a SHARED library." ON)
     option(${PROJECT_NAME}_BUILD_STATIC_LIB "Indicates if we build a STATIC library." ON)
     if(EXISTS "${PROJECT_SOURCE_DIR}/test/CMakeLists.txt")
@@ -110,12 +120,14 @@ function(add_public_cpp_library)
         option(${PROJECT_NAME}_BUILD_EXAMPLES "Indicates if we build the examples or not." OFF)
     endif()
 
-    # OUTPUT PATHS
+    #-----
+    # Output paths
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BUILD_TYPE}/bin)
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BUILD_TYPE}/lib)
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BUILD_TYPE}/lib)
 
-    # PRINT STATUS
+    #-----
+    # Status
     message(STATUS "PROJECT : ${PROJECT_NAME} v${PROJECT_VERSION}")
     message(STATUS "BUILD   : ${CMAKE_BUILD_TYPE}")
     message(STATUS "CPPCOMP : ${CMAKE_CXX_COMPILER} ${CMAKE_CXX_COMPILER_VERSION}")
@@ -123,10 +135,18 @@ function(add_public_cpp_library)
     if(NOT ${${PROJECT_NAME}_BUILD_SHARED_LIB} AND NOT ${${PROJECT_NAME}_BUILD_STATIC_LIB})
         message(FATAL_ERROR "You did not choose which target(s) to build (SHARED, STATIC).")
     endif()
-
     #-----
 
-    # GENERATE HEADER VERSION FILE
+    #-----
+    # Add target library
+    include(GNUInstallDirs)
+
+    set(project_object_target ${PROJECT_NAME}-object)
+    set(project_shared_target ${PROJECT_NAME})
+    set(project_static_target ${PROJECT_NAME}-static)
+    set(export_name ${PROJECT_NAME})
+
+    # Generate header version file, if wanted
     if(FARG_VERSION_HEADER)
         if(IS_ABSOLUTE ${FARG_VERSION_HEADER})
             message(FATAL_ERROR "Provide a relative path for generated version file!")
@@ -135,21 +155,12 @@ function(add_public_cpp_library)
                                 VERSION_HEADER ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}/${FARG_VERSION_HEADER})
     endif()
 
-    #-----
-
-    include(GNUInstallDirs)
-
-    # ADD TARGET LIBRARY
-    set(project_object_target ${PROJECT_NAME}-object)
-    set(project_shared_target ${PROJECT_NAME})
-    set(project_static_target ${PROJECT_NAME}-static)
-    set(export_name ${PROJECT_NAME})
-
-    file(GLOB_RECURSE target_header_files include/*)
-    file(GLOB_RECURSE target_src_files src/*)
+    # Object target
+    file(GLOB_RECURSE target_header_files ${include_dir}/*)
+    file(GLOB_RECURSE target_src_files ${src_dir}/*)
     add_library(${project_object_target} OBJECT ${target_header_files} ${target_src_files})
     target_include_directories(${project_object_target} PUBLIC
-        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/${include_dir}>
         $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>)
     set_property(TARGET ${project_object_target} PROPERTY POSITION_INDEPENDENT_CODE 1)
     if(MSVC)
@@ -158,6 +169,7 @@ function(add_public_cpp_library)
         target_compile_options(${project_object_target} PRIVATE -Wall -Wextra -pedantic)
     endif()
 
+    # Shared target
     if(${${PROJECT_NAME}_BUILD_SHARED_LIB})
         add_library(${project_shared_target} SHARED $<TARGET_OBJECTS:${project_object_target}>)
         target_include_directories(${project_shared_target} PUBLIC $<INSTALL_INTERFACE:include>)
@@ -165,41 +177,42 @@ function(add_public_cpp_library)
         set(project_targets ${project_targets} ${project_shared_target})
     endif()
 
+    # Static target
     if(${${PROJECT_NAME}_BUILD_STATIC_LIB})
         add_library(${project_static_target} STATIC $<TARGET_OBJECTS:${project_object_target}>)
         target_include_directories(${project_static_target} PUBLIC $<INSTALL_INTERFACE:include>)
         set_target_properties(${project_static_target} PROPERTIES DEBUG_POSTFIX "-d")
         set(project_targets ${project_targets} ${project_static_target})
     endif()
-
     #-----
 
-    # EXAMPLES
-    if(EXISTS "${PROJECT_SOURCE_DIR}/example/CMakeLists.txt" AND ${${PROJECT_NAME}_BUILD_EXAMPLES})
-        add_subdirectory(example)
+    #-----
+    # Examples
+    if(EXISTS "${PROJECT_SOURCE_DIR}/${example_dir}/CMakeLists.txt" AND ${${PROJECT_NAME}_BUILD_EXAMPLES})
+        add_subdirectory(${example_dir})
     endif()
 
     #-----
-
-    # TESTS
-    if(EXISTS "${PROJECT_SOURCE_DIR}/test/CMakeLists.txt" AND ${${PROJECT_NAME}_BUILD_TESTS})
+    # Tests
+    if(EXISTS "${PROJECT_SOURCE_DIR}/${test_dir}/CMakeLists.txt" AND ${${PROJECT_NAME}_BUILD_TESTS})
         enable_testing()
-        add_subdirectory(test)
+        add_subdirectory(${test_dir})
     endif()
-
     #-----
 
-    # INSTALL
+    #-----
+    # Install
     include(CMakePackageConfigHelpers)
 
     set(relative_install_cmake_package_dir "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
     set(install_cmake_package_dir "${CMAKE_INSTALL_PREFIX}/${relative_install_cmake_package_dir}")
 
     install(TARGETS ${project_targets} EXPORT ${export_name})
-    install(DIRECTORY include/${PROJECT_NAME} DESTINATION include)
+    install(DIRECTORY ${include_dir}/${PROJECT_NAME} DESTINATION include)
     install(DIRECTORY ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME} DESTINATION include)
     install(EXPORT ${export_name} DESTINATION ${relative_install_cmake_package_dir})
 
+    # Package config file
     if(FARG_BASIC_PACKAGE_CONFIG_FILE)
         generate_basic_package_config_file(${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config.cmake)
     elseif(FARG_VERBOSE_PACKAGE_CONFIG_FILE)
@@ -212,6 +225,7 @@ function(add_public_cpp_library)
             NO_CHECK_REQUIRED_COMPONENTS_MACRO)
     endif()
 
+    # Package version file
     write_basic_package_version_file("${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake"
         VERSION ${PROJECT_VERSION}
         COMPATIBILITY SameMajorVersion)
@@ -221,5 +235,7 @@ function(add_public_cpp_library)
         ${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake
         DESTINATION ${install_cmake_package_dir})
 
+    # Uninstall script
     install_cmake_uninstall_script(${install_cmake_package_dir})
+    #-----
 endfunction()
