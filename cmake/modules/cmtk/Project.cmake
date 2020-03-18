@@ -31,7 +31,6 @@ endfunction()
 
 function(generate_default_version_header version_file)
     to_upper_var_name(${PROJECT_NAME} upper_project_var_name)
-    cmake_print_variables(version_file)
     file(WRITE ${version_file}
          "#pragma once
 
@@ -39,8 +38,7 @@ function(generate_default_version_header version_file)
 #define ${upper_project_var_name}_VERSION_MINOR ${PROJECT_VERSION_MINOR}
 #define ${upper_project_var_name}_VERSION_PATCH ${PROJECT_VERSION_PATCH}
 #define ${upper_project_var_name}_VERSION \"${PROJECT_VERSION}\"
-"
-    )
+")
 endfunction()
 
 function(generate_version_header)
@@ -64,6 +62,12 @@ function(generate_version_header)
             generate_default_version_header(${FARG_VERSION_HEADER})
         endif()
     endif()
+endfunction()
+
+function(generate_basic_package_config_file package_config_file)
+    file(WRITE ${package_config_file}
+         "include(${CMAKE_CURRENT_LIST_DIR}/${PROJECT_NAME}.cmake)
+")
 endfunction()
 
 function(install_cmake_uninstall_script install_cmake_package_dir)

@@ -56,17 +56,40 @@ function(add_cpp_library_tests)
     endif()
 endfunction()
 
-function(add_cpp_library)
+function(generate_verbose_public_library_config_file package_config_file)
+    generate_basic_package_config_file(package_config_file)
+    file(APPEND ${package_config_file}
+         "
+get_target_property(${PROJECT_NAME}-CONFS ${PROJECT_NAME} IMPORTED_CONFIGURATIONS)
+if(${PROJECT_NAME}-CONFS)
+    foreach(${PROJECT_NAME}-CONF ${${PROJECT_NAME}-CONFS})
+        # Get shared
+        get_target_property(shared-path ${PROJECT_NAME} IMPORTED_LOCATION_${${PROJECT_NAME}-CONF})
+        get_filename_component(shared-name ${shared-path} NAME)
+        # Get static
+        get_target_property(static-path ${PROJECT_NAME}-static IMPORTED_LOCATION_${${PROJECT_NAME}-CONF})
+        get_filename_component(static-name ${static-path} NAME)
+        message(STATUS \"Found strn ${strn-CONF}: (found version \\\"${PROJECT_VERSION}\\\"): ${shared-name} ${static-name}\")
+    endforeach()
+endif()
+")
+endfunction()
+
+function(add_public_cpp_library)
     #----------------------------------------#
     # Declare args
-    set(options "")
-    set(params "CXX_STANDARD;INPUT_VERSION_HEADER;VERSION_HEADER")
+    set(options "BASIC_PACKAGE_CONFIG_FILE;VERBOSE_PACKAGE_CONFIG_FILE")
+    set(params "CXX_STANDARD;INPUT_VERSION_HEADER;VERSION_HEADER;INPUT_PACKAGE_CONFIG_FILE")
     set(lists "")
     # Parse args
     cmake_parse_arguments(PARSE_ARGV 0 "FARG" "${options}" "${params}" "${lists}")
     # Set default value if needed
     if(NOT FARG_CXX_STANDARD)
         set(FARG_CXX_STANDARD 17)
+    endif()
+    # Check args values
+    if(NOT FARG_BASIC_PACKAGE_CONFIG_FILE AND NOT FARG_VERBOSE_PACKAGE_CONFIG_FILE AND NOT FARG_INPUT_PACKAGE_CONFIG_FILE)
+        message(FATAL_ERROR "Package config file argument is missing. [BASIC_PACKAGE_CONFIG_FILE|VERBOSE_PACKAGE_CONFIG_FILE|INPUT_PACKAGE_CONFIG_FILE]")
     endif()
     #----------------------------------------#
 
@@ -177,11 +200,17 @@ function(add_cpp_library)
     install(DIRECTORY ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME} DESTINATION include)
     install(EXPORT ${export_name} DESTINATION ${relative_install_cmake_package_dir})
 
-    configure_package_config_file(${PROJECT_SOURCE_DIR}/cmake/input/${PROJECT_NAME}-config.cmake.in
-                                 "${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
-                                 INSTALL_DESTINATION ${install_cmake_package_dir}
-                                 NO_SET_AND_CHECK_MACRO
-                                 NO_CHECK_REQUIRED_COMPONENTS_MACRO)
+    if(FARG_BASIC_PACKAGE_CONFIG_FILE)
+        generate_basic_package_config_file(${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config.cmake)
+    elseif(FARG_VERBOSE_PACKAGE_CONFIG_FILE)
+        generate_verbose_public_library_config_file(${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config.cmake)
+    elseif(FARG_INPUT_PACKAGE_CONFIG_FILE)
+        configure_package_config_file(${FARG_INPUT_PACKAGE_CONFIG_FILE}
+            "${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
+            INSTALL_DESTINATION ${relative_install_cmake_package_dir}
+            NO_SET_AND_CHECK_MACRO
+            NO_CHECK_REQUIRED_COMPONENTS_MACRO)
+    endif()
 
     write_basic_package_version_file("${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake"
         VERSION ${PROJECT_VERSION}

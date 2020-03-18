@@ -21,7 +21,8 @@ project(strn
         DESCRIPTION "A C++ library providing short trivially comparable string classes whose hash are trivially computable."
         HOMEPAGE_URL "https://github.com/arapelle/strn"
         LANGUAGES CXX)
-add_cpp_library(VERSION_HEADER "version.hpp")
+add_public_cpp_library(VERSION_HEADER "version.hpp"
+                       INPUT_PACKAGE_CONFIG_FILE "cmake/input/strn-config.cmake.in")
 
 #-----
 
