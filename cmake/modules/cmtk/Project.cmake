@@ -1,7 +1,5 @@
 
-list(PREPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
-include(Utility)
-list(POP_FRONT CMAKE_MODULE_PATH)
+include(${CMAKE_CURRENT_LIST_DIR}/Utility.cmake)
 
 function(check_cmake_binary_dir)
     set(bin_dir ${CMAKE_BINARY_DIR})

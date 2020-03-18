@@ -1,7 +1,5 @@
 
-list(PREPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
-include(Project)
-list(POP_FRONT CMAKE_MODULE_PATH)
+include(${CMAKE_CURRENT_LIST_DIR}/Project.cmake)
 
 function(add_cpp_library_examples)
     set(example_output_dir ${CMAKE_BUILD_TYPE})
