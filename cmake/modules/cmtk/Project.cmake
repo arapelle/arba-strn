@@ -66,7 +66,7 @@ endfunction()
 
 function(generate_basic_package_config_file package_config_file)
     file(WRITE ${package_config_file}
-         "include(${CMAKE_CURRENT_LIST_DIR}/${PROJECT_NAME}.cmake)
+         "include(\${CMAKE_CURRENT_LIST_DIR}/${PROJECT_NAME}.cmake)
 ")
 endfunction()
 

@@ -57,19 +57,19 @@ function(add_cpp_library_tests)
 endfunction()
 
 function(generate_verbose_public_library_config_file package_config_file)
-    generate_basic_package_config_file(package_config_file)
+    generate_basic_package_config_file(${package_config_file})
     file(APPEND ${package_config_file}
          "
-get_target_property(${PROJECT_NAME}-CONFS ${PROJECT_NAME} IMPORTED_CONFIGURATIONS)
-if(${PROJECT_NAME}-CONFS)
-    foreach(${PROJECT_NAME}-CONF ${${PROJECT_NAME}-CONFS})
+get_target_property(project_confs ${PROJECT_NAME} IMPORTED_CONFIGURATIONS)
+if(project_confs)
+    foreach(project_conf \${project_confs})
         # Get shared
-        get_target_property(shared-path ${PROJECT_NAME} IMPORTED_LOCATION_${${PROJECT_NAME}-CONF})
-        get_filename_component(shared-name ${shared-path} NAME)
+        get_target_property(shared-path ${PROJECT_NAME} IMPORTED_LOCATION_\${project_conf})
+        get_filename_component(shared-name \${shared-path} NAME)
         # Get static
-        get_target_property(static-path ${PROJECT_NAME}-static IMPORTED_LOCATION_${${PROJECT_NAME}-CONF})
-        get_filename_component(static-name ${static-path} NAME)
-        message(STATUS \"Found strn ${strn-CONF}: (found version \\\"${PROJECT_VERSION}\\\"): ${shared-name} ${static-name}\")
+        get_target_property(static-path ${PROJECT_NAME}-static IMPORTED_LOCATION_\${project_conf})
+        get_filename_component(static-name \${static-path} NAME)
+        message(STATUS \"Found ${PROJECT_NAME} \${project_conf}: (found version \\\"${PROJECT_VERSION}\\\"): \${shared-name} \${static-name}\")
     endforeach()
 endif()
 ")

@@ -22,7 +22,7 @@ project(strn
         HOMEPAGE_URL "https://github.com/arapelle/strn"
         LANGUAGES CXX)
 add_public_cpp_library(VERSION_HEADER "version.hpp"
-                       INPUT_PACKAGE_CONFIG_FILE "cmake/input/strn-config.cmake.in")
+                       VERBOSE_PACKAGE_CONFIG_FILE)
 
 #-----
 
