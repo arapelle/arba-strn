@@ -29,7 +29,8 @@ endfunction()
 
 function(generate_default_version_header version_file)
     to_upper_var_name(${PROJECT_NAME} upper_project_var_name)
-    file(WRITE ${version_file}
+    file(GENERATE OUTPUT ${version_file}
+        CONTENT
          "#pragma once
 
 #define ${upper_project_var_name}_VERSION_MAJOR ${PROJECT_VERSION_MAJOR}
