@@ -188,8 +188,7 @@ function(add_public_cpp_library)
 
     #-----
     # Tests
-    if(EXISTS "${PROJECT_SOURCE_DIR}/${test_dir}/CMakeLists.txt" AND ${${PROJECT_NAME}_BUILD_TESTS})
-        enable_testing()
+    if(EXISTS "${PROJECT_SOURCE_DIR}/${test_dir}/CMakeLists.txt" AND BUILD_TESTING AND ${${PROJECT_NAME}_BUILD_TESTS})
         add_subdirectory(${test_dir})
     endif()
     #-----
