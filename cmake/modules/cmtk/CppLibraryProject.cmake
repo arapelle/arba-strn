@@ -1,57 +1,53 @@
 
 include(${CMAKE_CURRENT_LIST_DIR}/Project.cmake)
 
-function(add_cpp_library_examples)
+function(add_public_cpp_library_examples cpp_lib)
     set(example_output_dir ${CMAKE_BUILD_TYPE})
-
-    get_property(project_targets DIRECTORY ${PROJECT_SOURCE_DIR} PROPERTY BUILDSYSTEM_TARGETS)
-    foreach(target ${project_targets})
-        get_target_property(target_type ${target} TYPE)
-        if(${target_type} STREQUAL "SHARED_LIBRARY" OR ${target_type} STREQUAL "STATIC_LIBRARY")
-            set(tested_lib ${target})
-            break()
-        endif()
-    endforeach()
-
-    if(tested_lib)
-        file(GLOB cpp_program_files "*.cpp")
-        foreach(filename ${cpp_program_files})
-            get_filename_component(example_program_name ${filename} NAME_WE)
-            add_executable(${example_program_name} ${filename})
-            set_target_properties(${example_program_name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${example_output_dir})
-            target_link_libraries(${example_program_name} $<TARGET_NAME:${tested_lib}>)
-            target_include_directories(${example_program_name} PUBLIC
-                $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-                $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>)
-        endforeach()
+    set(cpp_lib_object ${cpp_lib}-object)
+    set(cpp_lib_shared ${cpp_lib})
+    set(cpp_lib_static ${cpp_lib}-static)
+    if(TARGET ${cpp_lib_shared})
+        set(cpp_lib ${cpp_lib_shared})
+    else()
+        set(cpp_lib ${cpp_lib_static})
     endif()
+
+    file(GLOB cpp_program_files "*.cpp")
+    foreach(filename ${cpp_program_files})
+        get_filename_component(example_prog ${filename} NAME_WE)
+        add_executable(${example_prog} ${filename})
+        set_target_properties(${example_prog} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${example_output_dir})
+        target_compile_features(${example_prog} PRIVATE cxx_std_17)
+        target_include_directories(${example_prog} PRIVATE
+            $<TARGET_PROPERTY:${cpp_lib},INCLUDE_DIRECTORIES>
+            $<TARGET_PROPERTY:${cpp_lib_object},INCLUDE_DIRECTORIES>)
+        target_link_libraries(${example_prog} PRIVATE $<TARGET_NAME:${cpp_lib}>)
+    endforeach()
 endfunction()
 
-function(add_cpp_library_tests)
+function(add_public_cpp_library_tests cpp_lib)
     set(test_output_dir ${CMAKE_BUILD_TYPE})
-
-    get_property(project_targets DIRECTORY ${PROJECT_SOURCE_DIR} PROPERTY BUILDSYSTEM_TARGETS)
-    foreach(target ${project_targets})
-        get_target_property(target_type ${target} TYPE)
-        if(${target_type} STREQUAL "SHARED_LIBRARY" OR ${target_type} STREQUAL "STATIC_LIBRARY")
-            set(tested_lib ${target})
-            break()
-        endif()
-    endforeach()
-
-    if(tested_lib)
-        file(GLOB cpp_program_files "*.cpp")
-        foreach(filename ${cpp_program_files})
-            get_filename_component(test_program_name ${filename} NAME_WE)
-            add_executable(${test_program_name} ${filename})
-            set_target_properties(${test_program_name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${test_output_dir})
-            target_link_libraries(${test_program_name} $<TARGET_NAME:${tested_lib}>)
-            target_include_directories(${test_program_name} PUBLIC
-                $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-                $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>)
-            add_test("${test_program_name}" ${test_output_dir}/${test_program_name})
-        endforeach()
+    set(cpp_lib_object ${cpp_lib}-object)
+    set(cpp_lib_shared ${cpp_lib})
+    set(cpp_lib_static ${cpp_lib}-static)
+    if(TARGET ${cpp_lib_shared})
+        set(cpp_lib ${cpp_lib_shared})
+    else()
+        set(cpp_lib ${cpp_lib_static})
     endif()
+
+    file(GLOB cpp_program_files "*.cpp")
+    foreach(filename ${cpp_program_files})
+        get_filename_component(test_prog ${filename} NAME_WE)
+        add_executable(${test_prog} ${filename})
+        set_target_properties(${test_prog} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${test_output_dir})
+        target_compile_features(${test_prog} PRIVATE cxx_std_17)
+        target_include_directories(${test_prog} PRIVATE
+            $<TARGET_PROPERTY:${cpp_lib},INCLUDE_DIRECTORIES>
+            $<TARGET_PROPERTY:${cpp_lib_object},INCLUDE_DIRECTORIES>)
+        target_link_libraries(${test_prog} PRIVATE $<TARGET_NAME:${cpp_lib}>)
+        add_test("${test_prog}" ${test_output_dir}/${test_prog})
+    endforeach()
 endfunction()
 
 function(generate_verbose_public_library_config_file package_config_file)
