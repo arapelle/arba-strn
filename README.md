@@ -3,6 +3,8 @@
 The purpose is to provide a short string class (8 bytes max) whose hash is trivially computable
 (no loop operation), and comparison operations are trivial too (no loop operation again).
 
+See [wiki](https://github.com/arapelle/strn/wiki) for more details.
+
 # Install #
 ## Requirements ##
 - A C++17 compiler (ex: g++-9)
@@ -15,8 +17,7 @@ cd /path/to/strn
 cmake -P cmake_quick_install.cmake
 ```
 
-## Custom Install ##
-[Wiki](https://github.com/arapelle/strn/wiki/Install)
+See custom install on [wiki](https://github.com/arapelle/strn/wiki/Install#custom-install).
 
 # How to use
 ## Example - "Hi world"
