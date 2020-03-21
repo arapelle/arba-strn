@@ -55,7 +55,9 @@ int main()
     return EXIT_SUCCESS;
 }
 ```
+## Example - Basic CMake project using *strn*
+See the [basic cmake project](./example/basic_cmake_example) example, and more specifically the [CMakeLists.txt](./example/basic_cmake_example/CMakeLists.txt) to see how to use *strn* in your CMake projects.
 
-## License
+# License
 
 [MIT License](./LICENSE.md) © strn
