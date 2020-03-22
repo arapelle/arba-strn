@@ -7,8 +7,12 @@ See [wiki](https://github.com/arapelle/strn/wiki) for more details.
 
 # Install #
 ## Requirements ##
+Binaries:
 - A C++17 compiler (ex: g++-9)
 - CMake 3.16 or later
+
+Libraries:
+- Google Test 1.10 or later (only for testing)
 
 ## Quick Install ##
 There is a cmake script at the root of the project which builds the library in *Release* mode and install it (default options are used).
