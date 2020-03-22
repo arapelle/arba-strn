@@ -56,7 +56,7 @@ int main()
 }
 ```
 ## Example - Using *strn* in a CMake project
-See the [basic cmake project](example/basic_cmake_example) example, and more specifically the [CMakeLists.txt](./example/basic_cmake_example/CMakeLists.txt) to see how to use *strn* in your CMake projects.
+See the [basic cmake project](https://github.com/arapelle/strn/tree/master/example/basic_cmake_project) example, and more specifically the [CMakeLists.txt](https://github.com/arapelle/strn/tree/master/example/basic_cmake_project/CMakeLists.txt) to see how to use *strn* in your CMake projects.
 
 # License
 
