@@ -36,6 +36,11 @@ function(add_public_cpp_library_tests cpp_lib)
         set(cpp_lib ${cpp_lib_static})
     endif()
 
+    if(NOT GTest_FOUND)
+        include(GoogleTest)
+        find_package(GTest REQUIRED)
+    endif()
+
     file(GLOB cpp_program_files "*.cpp")
     foreach(filename ${cpp_program_files})
         get_filename_component(test_prog ${filename} NAME_WE)
@@ -45,8 +50,8 @@ function(add_public_cpp_library_tests cpp_lib)
         target_include_directories(${test_prog} PRIVATE
             $<TARGET_PROPERTY:${cpp_lib},INCLUDE_DIRECTORIES>
             $<TARGET_PROPERTY:${cpp_lib_object},INCLUDE_DIRECTORIES>)
-        target_link_libraries(${test_prog} PRIVATE $<TARGET_NAME:${cpp_lib}>)
-        add_test("${test_prog}" ${test_output_dir}/${test_prog})
+        target_link_libraries(${test_prog} PRIVATE $<TARGET_NAME:${cpp_lib}> GTest::GTest)
+        gtest_discover_tests(${test_prog} TEST_PREFIX ${cpp_lib}::)
     endforeach()
 endfunction()
 
