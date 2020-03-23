@@ -24,11 +24,11 @@ TEST(string64_tests, test_constructor_empty)
 
 TEST(string64_tests, test_constructor_std_string_view)
 {
-    std::string str(".1234S678");
+    std::string str(".234S678");
     std::string_view strv(str);
     strn::string64 str64(strv);
-    ASSERT_EQ(str64.integer(), ".1234S678"_hash);
-    ASSERT_EQ(str64.hash(), ".1234S678"_hash);
+    ASSERT_EQ(str64.integer(), ".234S678"_hash);
+    ASSERT_EQ(str64.hash(), ".234S678"_hash);
 
     std::string small_str("c12");
     std::string_view small_strv(small_str);
@@ -184,8 +184,10 @@ TEST(string64_tests, test_is_printable)
 {
     strn::string64 str64("abcdefgh");
     ASSERT_TRUE(str64.is_printable());
+    strn::string64 small_str64("abcd");
+    ASSERT_TRUE(small_str64.is_printable());
     strn::string64 str64_not_printable("abc\1\2");
-    ASSERT_TRUE(!str64_not_printable.is_printable());
+    ASSERT_FALSE(str64_not_printable.is_printable());
 }
 
 TEST(string64_tests, test_nth)
@@ -257,11 +259,17 @@ TEST(string64_tests, test_std_hash)
 
 TEST(string64_tests, test_operator_read)
 {
-    std::istringstream stream("abc\t123");
+    std::istringstream stream("abcdefghi\t123");
     strn::string64 str;
     stream >> str;
-    ASSERT_EQ(str, "abc"_s64);
-    ASSERT_EQ(str.hash(), "abc"_hash);
+    ASSERT_EQ(str, "abcdefgh"_s64);
+    ASSERT_EQ(str.hash(), "abcdefgh"_hash);
+
+    std::istringstream small_stream("abc\t123");
+    strn::string64 small_str;
+    small_stream >> small_str;
+    ASSERT_EQ(small_str, "abc"_s64);
+    ASSERT_EQ(small_str.hash(), "abc"_hash);
 }
 
 TEST(string64_tests, test_operator_write)
