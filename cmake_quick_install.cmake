@@ -21,7 +21,7 @@ if(EXISTS ${error_file})
 endif()
 
 message(STATUS "*  CONFIGURATION")
-execute_process(COMMAND ${CMAKE_COMMAND} -S ${src_dir} -B ${build_dir}  RESULT_VARIABLE cmd_res)
+execute_process(COMMAND ${CMAKE_COMMAND} -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -S ${src_dir} -B ${build_dir}  RESULT_VARIABLE cmd_res)
 if(NOT cmd_res EQUAL 0)
     file(TOUCH ${error_file})
     return()
