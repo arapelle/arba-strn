@@ -1,7 +1,6 @@
 #pragma once
 
 #include <strn/version.hpp>
-#include "hash.hpp"
 #include "c_str_traits.hpp"
 #include <cstring>
 #include <string_view>

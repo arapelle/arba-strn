@@ -6,13 +6,21 @@
 
 using namespace strn::literals;
 
-TEST(string64_tests, hash_literal)
+TEST(string56_tests, test_constructor_integer)
 {
-    std::size_t hash = "c234S678"_hash;
-    ASSERT_EQ(hash, ('c'|('2'<<8)|('3'<<16)|('4'<<24)|(std::size_t('S')<<32)|(std::size_t('6')<<40)|(std::size_t('7')<<48)|(std::size_t('8')<<56)));
+    strn::string64::uint ival(0x1122334455667788);
+    strn::string64 str(ival);
+    ASSERT_EQ(str.integer(), ival);
+    ASSERT_EQ(str.hash(), static_cast<std::size_t>(ival));
+}
 
-    std::size_t small_hash = "c12"_hash;
-    ASSERT_EQ(small_hash, ('c'|('1'<<8)|('2'<<16)));
+TEST(string56_tests, test_s64_literal)
+{
+    strn::string64::uint ival = "c234S678"_s64.integer();
+    ASSERT_EQ(ival, ('c'|('2'<<8)|('3'<<16)|('4'<<24)|(std::size_t('S')<<32)|(std::size_t('6')<<40)|(std::size_t('7')<<48)|(std::size_t('8')<<56)));
+
+    strn::string64::uint small_ival = "c12"_s64.integer();
+    ASSERT_EQ(small_ival, ('c'|('1'<<8)|('2'<<16)));
 }
 
 TEST(string64_tests, test_constructor_empty)
@@ -27,14 +35,14 @@ TEST(string64_tests, test_constructor_std_string_view)
     std::string str(".234S678");
     std::string_view strv(str);
     strn::string64 str64(strv);
-    ASSERT_EQ(str64.integer(), ".234S678"_hash);
-    ASSERT_EQ(str64.hash(), ".234S678"_hash);
+    ASSERT_EQ(str64.integer(), ".234S678"_s64.integer());
+    ASSERT_EQ(str64.hash(), ".234S678"_s64.hash());
 
     std::string small_str("c12");
     std::string_view small_strv(small_str);
     strn::string64 small_str64(small_strv);
-    ASSERT_EQ(small_str64.integer(), "c12"_hash);
-    ASSERT_EQ(small_str64.hash(), "c12"_hash);
+    ASSERT_EQ(small_str64.integer(), "c12"_s64.integer());
+    ASSERT_EQ(small_str64.hash(), "c12"_s64.hash());
 }
 
 TEST(string64_tests, test_constructor_too_long_std_string_view)
@@ -42,8 +50,8 @@ TEST(string64_tests, test_constructor_too_long_std_string_view)
     std::string str("123456789");
     std::string_view strv(str);
     strn::string64 str64(strv);
-    ASSERT_EQ(str64.integer(), "12345678"_hash);
-    ASSERT_EQ(str64.hash(), "12345678"_hash);
+    ASSERT_EQ(str64.integer(), "12345678"_s64.integer());
+    ASSERT_EQ(str64.hash(), "12345678"_s64.hash());
 }
 
 TEST(string64_tests, test_iterators)
@@ -88,32 +96,32 @@ TEST(string64_tests, test_str_correctness)
     ASSERT_EQ(str64.to_string(), "orange");
     ASSERT_NE(str64.integer(), 0);
     ASSERT_NE(str64.hash(), 0);
-    ASSERT_EQ(str64.integer(), "orange"_hash);
-    ASSERT_EQ(str64.hash(), "orange"_hash);
+    ASSERT_EQ(str64.integer(), "orange"_s64.integer());
+    ASSERT_EQ(str64.hash(), "orange"_s64.hash());
 }
 
 TEST(string64_tests, test_constructor_std_string)
 {
     std::string str("46578c");
     strn::string64 str64(str);
-    ASSERT_EQ(str64.integer(), "46578c"_hash);
-    ASSERT_EQ(str64.hash(), "46578c"_hash);
+    ASSERT_EQ(str64.integer(), "46578c"_s64.integer());
+    ASSERT_EQ(str64.hash(), "46578c"_s64.hash());
 }
 
 TEST(string64_tests, test_constructor_c_str_n)
 {
     strn::string64 str64("Octogone");
-    ASSERT_EQ(str64.integer(), "Octogone"_hash);
+    ASSERT_EQ(str64.integer(), "Octogone"_s64.integer());
 
     strn::string64 small_str64("Cactus");
-    ASSERT_EQ(small_str64.integer(), "Cactus"_hash);
+    ASSERT_EQ(small_str64.integer(), "Cactus"_s64.hash());
 }
 
 TEST(string64_tests, test_constructor_c_str)
 {
     const char* cstr = "Azerty";
     strn::string64 str64(cstr);
-    ASSERT_EQ(str64.integer(), "Azerty"_hash);
+    ASSERT_EQ(str64.integer(), "Azerty"_s64.integer());
 }
 
 TEST(string64_tests, test_operator_eq_and_neq)
@@ -132,7 +140,7 @@ TEST(string64_tests, test_hash)
 
     switch (str.hash())
     {
-    case "abcdefgh"_hash:
+    case "abcdefgh"_s64.hash():
         SUCCEED();
         break;
     default:
@@ -209,14 +217,14 @@ TEST(string64_tests, test_operator_less)
 
 enum number : uint64_t
 {
-    ONE = "ONE"_hash,
-    TWO = "TWO"_hash,
+    ONE = "ONE"_s64.integer(),
+    TWO = "TWO"_s64.integer(),
 };
 
 enum class color : uint64_t
 {
-    ORANGE = "ORANGE"_hash,
-    BLUE = "BLUE"_hash,
+    ORANGE = "ORANGE"_s64.integer(),
+    BLUE = "BLUE"_s64.integer(),
 };
 
 enum class bad_enum64 : uint32_t
@@ -254,7 +262,7 @@ TEST(string64_tests, test_string_64_to_enum)
 TEST(string64_tests, test_std_hash)
 {
     std::hash<strn::string64> std_hash;
-    ASSERT_EQ(std_hash("final"_s64), "final"_hash);
+    ASSERT_EQ(std_hash("final"_s64), "final"_s64.hash());
 }
 
 TEST(string64_tests, test_operator_read)
@@ -263,13 +271,13 @@ TEST(string64_tests, test_operator_read)
     strn::string64 str;
     stream >> str;
     ASSERT_EQ(str, "abcdefgh"_s64);
-    ASSERT_EQ(str.hash(), "abcdefgh"_hash);
+    ASSERT_EQ(str.integer(), "abcdefgh"_s64.integer());
 
     std::istringstream small_stream("abc\t123");
     strn::string64 small_str;
     small_stream >> small_str;
     ASSERT_EQ(small_str, "abc"_s64);
-    ASSERT_EQ(small_str.hash(), "abc"_hash);
+    ASSERT_EQ(small_str.integer(), "abc"_s64.integer());
 }
 
 TEST(string64_tests, test_operator_write)

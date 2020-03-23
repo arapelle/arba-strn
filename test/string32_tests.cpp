@@ -6,13 +6,21 @@
 
 using namespace strn::literals;
 
-TEST(string32_tests, hash_literal)
+TEST(string32_tests, test_constructor_integer)
 {
-    std::size_t hash = "c2E4"_hash;
-    ASSERT_EQ(hash, ('c'|('2'<<8)|('E'<<16)|('4'<<24)));
+    strn::string32::uint ival(0x11223344);
+    strn::string32 str(ival);
+    ASSERT_EQ(str.integer(), ival);
+    ASSERT_EQ(str.hash(), static_cast<std::size_t>(ival));
+}
 
-    std::size_t small_hash = "c12"_hash;
-    ASSERT_EQ(small_hash, ('c'|('1'<<8)|('2'<<16)));
+TEST(string56_tests, test_s64_literal)
+{
+    strn::string32::uint ival = "c2E4"_s32.integer();
+    ASSERT_EQ(ival, ('c'|('2'<<8)|('E'<<16)|('4'<<24)));
+
+    strn::string32::uint small_ival = "c12"_s32.integer();
+    ASSERT_EQ(small_ival, ('c'|('1'<<8)|('2'<<16)));
 }
 
 TEST(string32_tests, test_constructor_empty)
@@ -27,14 +35,14 @@ TEST(string32_tests, test_constructor_std_string_view)
     std::string str(".2E4");
     std::string_view strv(str);
     strn::string32 str32(strv);
-    ASSERT_EQ(str32.integer(), ".2E4"_hash);
-    ASSERT_EQ(str32.hash(), ".2E4"_hash);
+    ASSERT_EQ(str32.integer(), ".2E4"_s32.integer());
+    ASSERT_EQ(str32.hash(), ".2E4"_s32.hash());
 
     std::string small_str("c12");
     std::string_view small_strv(small_str);
     strn::string32 small_str32(small_strv);
-    ASSERT_EQ(small_str32.integer(), "c12"_hash);
-    ASSERT_EQ(small_str32.hash(), "c12"_hash);
+    ASSERT_EQ(small_str32.integer(), "c12"_s32.integer());
+    ASSERT_EQ(small_str32.hash(), "c12"_s32.hash());
 }
 
 TEST(string32_tests, test_constructor_too_long_std_string_view)
@@ -42,8 +50,8 @@ TEST(string32_tests, test_constructor_too_long_std_string_view)
     std::string str("12345");
     std::string_view strv(str);
     strn::string32 str32(strv);
-    ASSERT_EQ(str32.integer(), "1234"_hash);
-    ASSERT_EQ(str32.hash(), "1234"_hash);
+    ASSERT_EQ(str32.integer(), "1234"_s32.integer());
+    ASSERT_EQ(str32.hash(), "1234"_s32.hash());
 }
 
 TEST(string32_tests, test_iterators)
@@ -88,32 +96,32 @@ TEST(string32_tests, test_str_correctness)
     ASSERT_EQ(str32.to_string(), "east");
     ASSERT_NE(str32.integer(), 0);
     ASSERT_NE(str32.hash(), 0);
-    ASSERT_EQ(str32.integer(), "east"_hash);
-    ASSERT_EQ(str32.hash(), "east"_hash);
+    ASSERT_EQ(str32.integer(), "east"_s32.integer());
+    ASSERT_EQ(str32.hash(), "east"_s32.hash());
 }
 
 TEST(string32_tests, test_constructor_std_string)
 {
     std::string str("465c");
     strn::string32 str32(str);
-    ASSERT_EQ(str32.integer(), "465c"_hash);
-    ASSERT_EQ(str32.hash(), "465c"_hash);
+    ASSERT_EQ(str32.integer(), "465c"_s32.integer());
+    ASSERT_EQ(str32.hash(), "465c"_s32.hash());
 }
 
 TEST(string32_tests, test_constructor_c_str_n)
 {
     strn::string32 str32("Goal");
-    ASSERT_EQ(str32.integer(), "Goal"_hash);
+    ASSERT_EQ(str32.integer(), "Goal"_s32.integer());
 
     strn::string32 small_str32("^_^");
-    ASSERT_EQ(small_str32.integer(), "^_^"_hash);
+    ASSERT_EQ(small_str32.integer(), "^_^"_s32.integer());
 }
 
 TEST(string32_tests, test_constructor_c_str)
 {
     const char* cstr = "Aze";
     strn::string32 str32(cstr);
-    ASSERT_EQ(str32.integer(), "Aze"_hash);
+    ASSERT_EQ(str32.integer(), "Aze"_s32.integer());
 }
 
 TEST(string32_tests, test_operator_eq_and_neq)
@@ -132,7 +140,7 @@ TEST(string32_tests, test_hash)
 
     switch (str.hash())
     {
-    case "abcd"_hash:
+    case "abcd"_s32.hash():
         SUCCEED();
         break;
     default:
@@ -209,14 +217,14 @@ TEST(string32_tests, test_operator_less)
 
 enum number : uint32_t
 {
-    ONE = "ONE"_hash,
-    TWO = "TWO"_hash,
+    ONE = "ONE"_s32.integer(),
+    TWO = "TWO"_s32.integer(),
 };
 
 enum class color : uint32_t
 {
-    PINK = "PINK"_hash,
-    BLUE = "BLUE"_hash,
+    PINK = "PINK"_s32.integer(),
+    BLUE = "BLUE"_s32.integer(),
 };
 
 enum class bad_enum32 : uint16_t
@@ -254,7 +262,7 @@ TEST(string32_tests, test_string_32_to_enum)
 TEST(string32_tests, test_std_hash)
 {
     std::hash<strn::string32> std_hash;
-    ASSERT_EQ(std_hash("ask"_s32), "ask"_hash);
+    ASSERT_EQ(std_hash("ask"_s32), "ask"_s32.hash());
 }
 
 TEST(string32_tests, test_operator_read)
@@ -263,13 +271,13 @@ TEST(string32_tests, test_operator_read)
     strn::string32 str;
     stream >> str;
     ASSERT_EQ(str, "abcd"_s32);
-    ASSERT_EQ(str.hash(), "abcd"_hash);
+    ASSERT_EQ(str.integer(), "abcd"_s32.integer());
 
     std::istringstream small_stream("abc\t123");
     strn::string32 small_str;
     small_stream >> small_str;
     ASSERT_EQ(small_str, "abc"_s32);
-    ASSERT_EQ(small_str.hash(), "abc"_hash);
+    ASSERT_EQ(small_str.integer(), "abc"_s32.integer());
 }
 
 TEST(string32_tests, test_operator_write)

@@ -1,5 +1,6 @@
 #include <strn/io.hpp>
 #include <strn/string64.hpp>
+#include <strn/string56.hpp>
 #include <strn/string32.hpp>
 #include <string>
 #include <iostream>
@@ -28,6 +29,32 @@ std::istream& operator>>(std::istream& stream, string64& str)
         else
             break;
     }
+    return stream;
+}
+
+std::ostream& operator<<(std::ostream& stream, const string56& str)
+{
+    uint8_t i = 0;
+    for (auto iter = str.begin(); stream && *iter && i < string56::max_length(); ++iter, ++i)
+        stream.put(*iter);
+    return stream;
+}
+
+std::istream& operator>>(std::istream& stream, string56& str)
+{
+    char ch = 0;
+    std::locale loc = stream.getloc();
+    auto iter = str.begin();
+    uint8_t i = 0;
+    for (; stream && !stream.eof() && i < string56::max_length(); ++i, ++iter)
+    {
+        stream.get(ch);
+        if (!std::isspace(ch, loc))
+            *iter = ch;
+        else
+            break;
+    }
+    *(str.begin() + str.max_length()) = i;
     return stream;
 }
 
