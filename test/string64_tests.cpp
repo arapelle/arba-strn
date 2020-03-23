@@ -8,8 +8,11 @@ using namespace strn::literals;
 
 TEST(string64_tests, hash_literal)
 {
-    std::size_t hash = "c12"_hash;
-    ASSERT_EQ(hash, ('c'|('1'<<8)|('2'<<16)));
+    std::size_t hash = "c234S678"_hash;
+    ASSERT_EQ(hash, ('c'|('2'<<8)|('3'<<16)|('4'<<24)|(std::size_t('S')<<32)|(std::size_t('6')<<40)|(std::size_t('7')<<48)|(std::size_t('8')<<56)));
+
+    std::size_t small_hash = "c12"_hash;
+    ASSERT_EQ(small_hash, ('c'|('1'<<8)|('2'<<16)));
 }
 
 TEST(string64_tests, test_constructor_empty)
@@ -21,20 +24,62 @@ TEST(string64_tests, test_constructor_empty)
 
 TEST(string64_tests, test_constructor_std_string_view)
 {
-    std::string str("c12");
-    std::string strv(str);
+    std::string str(".1234S678");
+    std::string_view strv(str);
     strn::string64 str64(strv);
-    ASSERT_EQ(str64.integer(), "c12"_hash);
-    ASSERT_EQ(str64.hash(), "c12"_hash);
+    ASSERT_EQ(str64.integer(), ".1234S678"_hash);
+    ASSERT_EQ(str64.hash(), ".1234S678"_hash);
+
+    std::string small_str("c12");
+    std::string_view small_strv(small_str);
+    strn::string64 small_str64(small_strv);
+    ASSERT_EQ(small_str64.integer(), "c12"_hash);
+    ASSERT_EQ(small_str64.hash(), "c12"_hash);
 }
 
 TEST(string64_tests, test_constructor_too_long_std_string_view)
 {
     std::string str("123456789");
-    std::string strv(str);
+    std::string_view strv(str);
     strn::string64 str64(strv);
     ASSERT_EQ(str64.integer(), "12345678"_hash);
     ASSERT_EQ(str64.hash(), "12345678"_hash);
+}
+
+TEST(string64_tests, test_iterators)
+{
+    strn::string64 str64("abcdefgh");
+    ASSERT_EQ(*str64.begin(), 'a');
+    ASSERT_EQ(std::distance(str64.begin(), str64.end()), 8);
+    ASSERT_EQ(*std::prev(str64.end()), 'h');
+
+    strn::string64 small_str64("abcd");
+    ASSERT_EQ(*small_str64.begin(), 'a');
+    ASSERT_EQ(std::distance(small_str64.begin(), small_str64.end()), 4);
+    ASSERT_EQ(*std::prev(small_str64.end()), 'd');
+}
+
+TEST(string64_tests, test_const_iterators)
+{
+    const strn::string64 const_str64("abcdefgh");
+    ASSERT_EQ(*const_str64.begin(), 'a');
+    ASSERT_EQ(std::distance(const_str64.begin(), const_str64.end()), 8);
+    ASSERT_EQ(*std::prev(const_str64.end()), 'h');
+
+    const strn::string64 const_small_str64("abcd");
+    ASSERT_EQ(*const_small_str64.begin(), 'a');
+    ASSERT_EQ(std::distance(const_small_str64.begin(), const_small_str64.end()), 4);
+    ASSERT_EQ(*std::prev(const_small_str64.end()), 'd');
+
+    strn::string64 str64("abcdefgh");
+    ASSERT_EQ(*str64.cbegin(), 'a');
+    ASSERT_EQ(std::distance(str64.cbegin(), str64.cend()), 8);
+    ASSERT_EQ(*std::prev(str64.cend()), 'h');
+
+    strn::string64 small_str64("abcd");
+    ASSERT_EQ(*small_str64.cbegin(), 'a');
+    ASSERT_EQ(std::distance(small_str64.cbegin(), small_str64.cend()), 4);
+    ASSERT_EQ(*std::prev(small_str64.cend()), 'd');
 }
 
 TEST(string64_tests, test_str_correctness)
@@ -57,8 +102,11 @@ TEST(string64_tests, test_constructor_std_string)
 
 TEST(string64_tests, test_constructor_c_str_n)
 {
-    strn::string64 str64("Cactus");
-    ASSERT_EQ(str64.integer(), "Cactus"_hash);
+    strn::string64 str64("Octogone");
+    ASSERT_EQ(str64.integer(), "Octogone"_hash);
+
+    strn::string64 small_str64("Cactus");
+    ASSERT_EQ(small_str64.integer(), "Cactus"_hash);
 }
 
 TEST(string64_tests, test_constructor_c_str)
@@ -130,13 +178,6 @@ TEST(string64_tests, test_length)
     str64 = "12345678"_s64;
     ASSERT_EQ(str64.length(), 8);
     static_assert(strn::string64::max_length() == 8);
-}
-
-TEST(string64_tests, test_iterators)
-{
-    strn::string64 str64("abcdefgh");
-    ASSERT_EQ(*str64.begin(), 'a');
-    ASSERT_EQ(std::distance(str64.begin(), str64.end()), 8);
 }
 
 TEST(string64_tests, test_is_printable)
