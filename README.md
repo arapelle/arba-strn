@@ -20,6 +20,10 @@ There is a cmake script at the root of the project which builds the library in *
 cd /path/to/strn
 cmake -P cmake_quick_install.cmake
 ```
+Use the following to quickly install a different mode.
+```
+cmake -DCMAKE_BUILD_TYPE=Debug -P cmake_quick_install.cmake
+```
 
 See custom install on [wiki](https://github.com/arapelle/strn/wiki/Install#custom-install).
 
