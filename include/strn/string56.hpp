@@ -62,7 +62,7 @@ public:
      * @brief string56
      * @param cstr
      *
-     * strn::string56 s56("123A5678");
+     * strn::string56 s56("123A567");
      */
     template <typename T, typename Tr = c_str_n_traits<T>,
             std::enable_if_t<Tr::length <= max_input_c_str_length_ && is_c_str_n_v<T>, int> = 0>
@@ -72,7 +72,7 @@ public:
     {}
 
     /**
-     * strn::string56 s56("123A56789");
+     * strn::string56 s56("123A5678");
      */
     template <typename T, typename Tr = c_str_n_traits<T>,
             std::enable_if_t<(!(Tr::length <= max_input_c_str_length_)) && is_c_str_n_v<T>, int> = 0>
