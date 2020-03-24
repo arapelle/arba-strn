@@ -151,19 +151,19 @@ template <class T>
 inline constexpr bool is_enum56_v = std::is_enum_v<T> && (sizeof(T) == sizeof(string56));
 
 template <class Enum, std::enable_if_t<is_enum56_v<Enum>, int> = 0>
-inline constexpr string56 to_string56(const Enum& e)
+inline constexpr string56 enum56_to_string56(const Enum& e)
 {
     return string56(static_cast<string56::uint>(e));
 }
 
 template <class Enum, std::enable_if_t<is_enum56_v<Enum>, int> = 0>
-inline std::string to_string(const Enum& e)
+inline std::string enum56_to_string(const Enum& e)
 {
-    return to_string56(e).to_string();
+    return enum56_to_string56(e).to_string();
 }
 
 template <class Enum, std::enable_if_t<is_enum56_v<Enum>, int> = 0>
-inline constexpr Enum to_enum(const string56& str)
+inline constexpr Enum enum56_to_enum(const string56& str)
 {
     return static_cast<Enum>(str.integer());
 }

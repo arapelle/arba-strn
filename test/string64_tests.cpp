@@ -237,26 +237,26 @@ static_assert(!strn::is_enum64_v<bad_enum64>);
 
 TEST(string64_tests, test_enum_to_string_64)
 {
-    strn::string64 stra = strn::to_string64(ONE);
+    strn::string64 stra = strn::enum64_to_string64(ONE);
     ASSERT_EQ(stra, "ONE"_s64);
-    strn::string64 strb = strn::to_string64(color::ORANGE);
+    strn::string64 strb = strn::enum64_to_string64(color::ORANGE);
     ASSERT_EQ(strb, "ORANGE"_s64);
 }
 
 TEST(string64_tests, test_enum_to_string)
 {
-    std::string stra = strn::to_string(ONE);
+    std::string stra = strn::enum64_to_string(ONE);
     ASSERT_EQ(stra, "ONE");
-    std::string strb = strn::to_string(color::ORANGE);
+    std::string strb = strn::enum64_to_string(color::ORANGE);
     ASSERT_EQ(strb, "ORANGE");
 }
 
 TEST(string64_tests, test_string_64_to_enum)
 {
     strn::string64 stra("ONE");
-    ASSERT_EQ(strn::to_enum<number>(stra), ONE);
+    ASSERT_EQ(strn::string64_to_enum<number>(stra), ONE);
     strn::string64 strb("ORANGE");
-    ASSERT_EQ(strn::to_enum<color>(strb), color::ORANGE);
+    ASSERT_EQ(strn::string64_to_enum<color>(strb), color::ORANGE);
 }
 
 TEST(string64_tests, test_std_hash)

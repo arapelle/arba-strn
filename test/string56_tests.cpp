@@ -237,26 +237,26 @@ static_assert(!strn::is_enum56_v<bad_enum56>);
 
 TEST(string56_tests, test_enum_to_string_56)
 {
-    strn::string56 stra = strn::to_string56(ONE);
+    strn::string56 stra = strn::enum56_to_string56(ONE);
     ASSERT_EQ(stra, "ONE"_s56);
-    strn::string56 strb = strn::to_string56(color::ORANGE);
+    strn::string56 strb = strn::enum56_to_string56(color::ORANGE);
     ASSERT_EQ(strb, "ORANGE"_s56);
 }
 
 TEST(string56_tests, test_enum_to_string)
 {
-    std::string stra = strn::to_string(ONE);
+    std::string stra = strn::enum56_to_string(ONE);
     ASSERT_EQ(stra, "ONE");
-    std::string strb = strn::to_string(color::ORANGE);
+    std::string strb = strn::enum56_to_string(color::ORANGE);
     ASSERT_EQ(strb, "ORANGE");
 }
 
 TEST(string56_tests, test_string_56_to_enum)
 {
     strn::string56 stra("ONE");
-    ASSERT_EQ(strn::to_enum<number>(stra), ONE);
+    ASSERT_EQ(strn::enum56_to_enum<number>(stra), ONE);
     strn::string56 strb("ORANGE");
-    ASSERT_EQ(strn::to_enum<color>(strb), color::ORANGE);
+    ASSERT_EQ(strn::enum56_to_enum<color>(strb), color::ORANGE);
 }
 
 TEST(string56_tests, test_std_hash)

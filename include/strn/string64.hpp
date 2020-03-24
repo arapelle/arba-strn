@@ -149,19 +149,19 @@ template <class T>
 inline constexpr bool is_enum64_v = std::is_enum_v<T> && (sizeof(T) == sizeof(string64));
 
 template <class Enum, std::enable_if_t<is_enum64_v<Enum>, int> = 0>
-inline constexpr string64 to_string64(const Enum& e)
+inline constexpr string64 enum64_to_string64(const Enum& e)
 {
     return string64(static_cast<string64::uint>(e));
 }
 
 template <class Enum, std::enable_if_t<is_enum64_v<Enum>, int> = 0>
-inline std::string to_string(const Enum& e)
+inline std::string enum64_to_string(const Enum& e)
 {
-    return to_string64(e).to_string();
+    return enum64_to_string64(e).to_string();
 }
 
 template <class Enum, std::enable_if_t<is_enum64_v<Enum>, int> = 0>
-inline constexpr Enum to_enum(const string64& str)
+inline constexpr Enum string64_to_enum(const string64& str)
 {
     return static_cast<Enum>(str.integer());
 }

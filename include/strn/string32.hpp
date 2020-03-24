@@ -148,19 +148,19 @@ template <class T>
 inline constexpr bool is_enum32_v = std::is_enum_v<T> && (sizeof(T) == sizeof(string32));
 
 template <class Enum, std::enable_if_t<is_enum32_v<Enum>, int> = 0>
-inline constexpr string32 to_string32(const Enum& e)
+inline constexpr string32 enum32_to_string32(const Enum& e)
 {
     return string32(static_cast<string32::uint>(e));
 }
 
 template <class Enum, std::enable_if_t<is_enum32_v<Enum>, int> = 0>
-inline std::string to_string(const Enum& e)
+inline std::string enum32_to_string(const Enum& e)
 {
-    return to_string32(e).to_string();
+    return enum32_to_string32(e).to_string();
 }
 
 template <class Enum, std::enable_if_t<is_enum32_v<Enum>, int> = 0>
-inline constexpr Enum to_enum(const string32& str)
+inline constexpr Enum enum32_to_enum(const string32& str)
 {
     return static_cast<Enum>(str.integer());
 }

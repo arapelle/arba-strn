@@ -237,26 +237,26 @@ static_assert(!strn::is_enum32_v<bad_enum32>);
 
 TEST(string32_tests, test_enum_to_string_32)
 {
-    strn::string32 stra = strn::to_string32(ONE);
+    strn::string32 stra = strn::enum32_to_string32(ONE);
     ASSERT_EQ(stra, "ONE"_s32);
-    strn::string32 strb = strn::to_string32(color::PINK);
+    strn::string32 strb = strn::enum32_to_string32(color::PINK);
     ASSERT_EQ(strb, "PINK"_s32);
 }
 
 TEST(string32_tests, test_enum_to_string)
 {
-    std::string stra = strn::to_string(ONE);
+    std::string stra = strn::enum32_to_string(ONE);
     ASSERT_EQ(stra, "ONE");
-    std::string strb = strn::to_string(color::PINK);
+    std::string strb = strn::enum32_to_string(color::PINK);
     ASSERT_EQ(strb, "PINK");
 }
 
 TEST(string32_tests, test_string_32_to_enum)
 {
     strn::string32 stra("ONE");
-    ASSERT_EQ(strn::to_enum<number>(stra), ONE);
+    ASSERT_EQ(strn::enum32_to_enum<number>(stra), ONE);
     strn::string32 strb("PINK");
-    ASSERT_EQ(strn::to_enum<color>(strb), color::PINK);
+    ASSERT_EQ(strn::enum32_to_enum<color>(strb), color::PINK);
 }
 
 TEST(string32_tests, test_std_hash)
