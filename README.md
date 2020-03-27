@@ -5,6 +5,8 @@ The purpose is to provide a short string class (8 bytes max) whose hash is trivi
 
 See [wiki](https://github.com/arapelle/strn/wiki) for more details.
 
+See [task board](https://app.gitkraken.com/glo/board/Xn4X4e25-QApB8nO) for future updates and features.
+
 # Install #
 ## Requirements ##
 Binaries:
