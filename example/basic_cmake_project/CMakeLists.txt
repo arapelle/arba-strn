@@ -5,8 +5,10 @@ project(basic_cmake_project)
 # Find package strn:
 find_package(strn 0.1.0 CONFIG REQUIRED)
 
+# Here, strn is used as a PRIVATE dependency
 add_executable(${PROJECT_NAME} main.cpp)
-target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
+get_target_property(strn_compile_features strn INTERFACE_COMPILE_FEATURES)
+target_compile_features(${PROJECT_NAME} PRIVATE ${strn_compile_features}) # For C++ standard
 # Use strn release shared library:
 get_target_property(strn_include_directories strn INTERFACE_INCLUDE_DIRECTORIES)
 get_target_property(strn_location strn IMPORTED_LOCATION_RELEASE)
