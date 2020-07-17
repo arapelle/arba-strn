@@ -14,7 +14,7 @@ TEST(string32_tests, test_constructor_integer)
     ASSERT_EQ(str.hash(), static_cast<std::size_t>(ival));
 }
 
-TEST(string56_tests, test_s64_literal)
+TEST(string32_tests, test_s64_literal)
 {
     strn::string32::uint ival = "c2E4"_s32.integer();
     ASSERT_EQ(ival, ('c'|('2'<<8)|('E'<<16)|('4'<<24)));
@@ -213,6 +213,30 @@ TEST(string32_tests, test_operator_less)
     strn::string32 str_bb("bb");
     ASSERT_LT(str_bb, str_aaa);
     ASSERT_LT(str_aaa.to_string_view(), str_bb.to_string_view());
+}
+
+TEST(string32_tests, test_push_back)
+{
+    strn::string32 str("aaa");
+    char ch = 'b';
+    str.push_back(ch);
+    strn::string32 stra("aaa");
+    strn::string32 strb("aaab");
+    ASSERT_NE(str, stra);
+    ASSERT_EQ(str, strb);
+    const char& last_ch = *(str.end()-1);
+    ASSERT_EQ(last_ch, 'b');
+}
+
+TEST(string32_tests, test_push_back_2)
+{
+    strn::string32 str("1234");
+    char ch = 'b';
+    str.push_back(ch);
+    strn::string32 expected_str("1234");
+    ASSERT_EQ(str, expected_str);
+    const char& last_ch = *(str.end()-1);
+    ASSERT_EQ(last_ch, '4');
 }
 
 enum number : uint32_t

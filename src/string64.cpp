@@ -36,4 +36,11 @@ bool string64::is_printable() const
     return true;
 }
 
+void string64::push_back(const char& ch)
+{
+    iterator end_iter = end();
+    if (std::size_t length = end_iter - begin(); length < max_length())
+        *end_iter = ch;
+}
+
 }

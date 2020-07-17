@@ -111,6 +111,7 @@ public:
     inline constexpr bool operator==(const string64& rhs) const { return integer_ == rhs.integer_; }
     inline constexpr bool operator!=(const string64& rhs) const { return integer_ != rhs.integer_; }
     inline constexpr bool operator<(const string64& rhs) const { return integer_ < rhs.integer_; }
+    void push_back(const char &ch);
 
 private:
     union

@@ -215,6 +215,30 @@ TEST(string56_tests, test_operator_less)
     ASSERT_LT(str_aaa.to_string_view(), str_bb.to_string_view());
 }
 
+TEST(string56_tests, test_push_back)
+{
+    strn::string56 str("aaa");
+    char ch = 'b';
+    str.push_back(ch);
+    strn::string56 stra("aaa");
+    strn::string56 strb("aaab");
+    ASSERT_NE(str, stra);
+    ASSERT_EQ(str, strb);
+    const char& last_ch = *(str.end()-1);
+    ASSERT_EQ(last_ch, 'b');
+}
+
+TEST(string56_tests, test_push_back_2)
+{
+    strn::string56 str("1234567");
+    char ch = 'b';
+    str.push_back(ch);
+    strn::string56 expected_str("1234567");
+    ASSERT_EQ(str, expected_str);
+    const char& last_ch = *(str.end()-1);
+    ASSERT_EQ(last_ch, '7');
+}
+
 enum number : uint64_t
 {
     ONE = "ONE"_s56.integer(),

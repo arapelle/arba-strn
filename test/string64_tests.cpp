@@ -6,7 +6,7 @@
 
 using namespace strn::literals;
 
-TEST(string56_tests, test_constructor_integer)
+TEST(string64_tests, test_constructor_integer)
 {
     strn::string64::uint ival(0x1122334455667788);
     strn::string64 str(ival);
@@ -14,7 +14,7 @@ TEST(string56_tests, test_constructor_integer)
     ASSERT_EQ(str.hash(), static_cast<std::size_t>(ival));
 }
 
-TEST(string56_tests, test_s64_literal)
+TEST(string64_tests, test_s64_literal)
 {
     strn::string64::uint ival = "c234S678"_s64.integer();
     ASSERT_EQ(ival, ('c'|('2'<<8)|('3'<<16)|('4'<<24)|(std::size_t('S')<<32)|(std::size_t('6')<<40)|(std::size_t('7')<<48)|(std::size_t('8')<<56)));
@@ -213,6 +213,30 @@ TEST(string64_tests, test_operator_less)
     strn::string64 str_bb("bb");
     ASSERT_LT(str_bb, str_aaa);
     ASSERT_LT(str_aaa.to_string_view(), str_bb.to_string_view());
+}
+
+TEST(string64_tests, test_push_back)
+{
+    strn::string64 str("aaa");
+    char ch = 'b';
+    str.push_back(ch);
+    strn::string64 stra("aaa");
+    strn::string64 strb("aaab");
+    ASSERT_NE(str, stra);
+    ASSERT_EQ(str, strb);
+    const char& last_ch = *(str.end()-1);
+    ASSERT_EQ(last_ch, 'b');
+}
+
+TEST(string64_tests, test_push_back_2)
+{
+    strn::string64 str("12345678");
+    char ch = 'b';
+    str.push_back(ch);
+    strn::string64 expected_str("12345678");
+    ASSERT_EQ(str, expected_str);
+    const char& last_ch = *(str.end()-1);
+    ASSERT_EQ(last_ch, '8');
 }
 
 enum number : uint64_t

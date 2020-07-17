@@ -24,4 +24,13 @@ bool string56::is_printable() const
     return true;
 }
 
+void string56::push_back(const char& ch)
+{
+    if (std::size_t length = this->length(); length < max_length())
+    {
+        *end() = ch;
+        ++cstr_.back();
+    }
+}
+
 }
