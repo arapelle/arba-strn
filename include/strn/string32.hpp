@@ -111,6 +111,9 @@ public:
     inline constexpr bool operator!=(const string32& rhs) const { return integer_ != rhs.integer_; }
     inline constexpr bool operator<(const string32& rhs) const { return integer_ < rhs.integer_; }
     void push_back(const char &ch);
+    void pop_back();
+    inline void clear() { integer_ = 0; }
+    void resize(std::size_t new_length, char new_ch = char());
 
 private:
     union

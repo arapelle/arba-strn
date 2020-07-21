@@ -239,6 +239,59 @@ TEST(string32_tests, test_push_back_2)
     ASSERT_EQ(last_ch, '4');
 }
 
+TEST(string32_tests, test_pop_back)
+{
+    strn::string32 str("aaab");
+    str.pop_back();
+    strn::string32 stra("aaa");
+    strn::string32 strb("aaab");
+    ASSERT_EQ(str, stra);
+    ASSERT_NE(str, strb);
+    const char& last_ch = *(str.end()-1);
+    ASSERT_EQ(last_ch, 'a');
+}
+
+TEST(string32_tests, test_clear)
+{
+    strn::string32 str("aaab");
+    str.clear();
+    strn::string32 strb("aaab");
+    ASSERT_TRUE(str.empty());
+    ASSERT_NE(str, strb);
+}
+
+TEST(string32_tests, test_resize_shorter)
+{
+    strn::string32 str("aab");
+    str.resize(1);
+    strn::string32 expected_str("a");
+    ASSERT_EQ(str, expected_str);
+}
+
+TEST(string32_tests, test_resize_same)
+{
+    strn::string32 str("aab");
+    str.resize(str.length());
+    strn::string32 expected_str("aab");
+    ASSERT_EQ(str, expected_str);
+}
+
+TEST(string32_tests, test_resize_longer)
+{
+    strn::string32 str("a");
+    str.resize(3, 'c');
+    strn::string32 expected_str("acc");
+    ASSERT_EQ(str, expected_str);
+}
+
+TEST(string32_tests, test_resize_too_much)
+{
+    strn::string32 str("a");
+    str.resize(5, 'c');
+    strn::string32 expected_str("accc");
+    ASSERT_EQ(str, expected_str);
+}
+
 enum number : uint32_t
 {
     ONE = "ONE"_s32.integer(),

@@ -239,6 +239,59 @@ TEST(string56_tests, test_push_back_2)
     ASSERT_EQ(last_ch, '7');
 }
 
+TEST(string56_tests, test_pop_back)
+{
+    strn::string56 str("aaab");
+    str.pop_back();
+    strn::string56 stra("aaa");
+    strn::string56 strb("aaab");
+    ASSERT_EQ(str, stra);
+    ASSERT_NE(str, strb);
+    const char& last_ch = *(str.end()-1);
+    ASSERT_EQ(last_ch, 'a');
+}
+
+TEST(string56_tests, test_clear)
+{
+    strn::string56 str("aaab");
+    str.clear();
+    strn::string56 strb("aaab");
+    ASSERT_TRUE(str.empty());
+    ASSERT_NE(str, strb);
+}
+
+TEST(string56_tests, test_resize_shorter)
+{
+    strn::string56 str("aabbcc");
+    str.resize(4);
+    strn::string56 expected_str("aabb");
+    ASSERT_EQ(str, expected_str);
+}
+
+TEST(string56_tests, test_resize_same)
+{
+    strn::string56 str("aabbcc");
+    str.resize(str.length());
+    strn::string56 expected_str("aabbcc");
+    ASSERT_EQ(str, expected_str);
+}
+
+TEST(string56_tests, test_resize_longer)
+{
+    strn::string56 str("aabb");
+    str.resize(6, 'c');
+    strn::string56 expected_str("aabbcc");
+    ASSERT_EQ(str, expected_str);
+}
+
+TEST(string56_tests, test_resize_too_much)
+{
+    strn::string56 str("aabb");
+    str.resize(9, 'c');
+    strn::string56 expected_str("aabbccc");
+    ASSERT_EQ(str, expected_str);
+}
+
 enum number : uint64_t
 {
     ONE = "ONE"_s56.integer(),
