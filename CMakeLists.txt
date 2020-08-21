@@ -22,10 +22,64 @@ project(strn
         HOMEPAGE_URL "https://github.com/arapelle/strn"
         LANGUAGES CXX)
 
+message(STATUS "BUILD   : ${CMAKE_BUILD_TYPE}")
+message(STATUS "CPPCOMP : ${CMAKE_CXX_COMPILER} ${CMAKE_CXX_COMPILER_VERSION}")
+message(STATUS "PROJECT : ${PROJECT_NAME} ${PROJECT_VERSION}")
+
+#-----
 include(CTest)
 
-add_public_cpp_library(VERSION_HEADER "version.hpp"
-                       VERBOSE_PACKAGE_CONFIG_FILE)
+# Project options
+library_build_options(${PROJECT_NAME} STATIC SHARED EXAMPLE TEST)
+
+# Headers:
+set(headers
+    include/strn/c_str_traits.hpp
+    include/strn/io.hpp
+    include/strn/string32.hpp
+    include/strn/string56.hpp
+    include/strn/string64.hpp
+)
+
+# Sources:
+set(sources
+    src/io.cpp
+    src/string32.cpp
+    src/string56.cpp
+    src/string64.cpp
+)
+
+# Add C++ library
+add_cpp_library(${PROJECT_NAME} ${PROJECT_NAME}_BUILD_SHARED_LIB ${PROJECT_NAME}_BUILD_STATIC_LIB
+    SHARED ${PROJECT_NAME}
+    STATIC ${PROJECT_NAME}-static
+    CXX_STANDARD 20
+    INCLUDE_DIRECTORIES include
+    OUTPUT_VERSION_HEADER "version.hpp"
+    HEADERS ${headers}
+    SOURCES ${sources}
+    BUILT_TARGETS project_targets
+    )
+
+# Install C++ library
+install_cpp_library_targets(${PROJECT_NAME}
+                            TARGETS ${project_targets}
+                            INCLUDE_DIRECTORIES "include/${PROJECT_NAME}"
+                            NAMESPACE strn::
+                            )
+
+# Install package
+install_package(${PROJECT_NAME}
+                VERBOSE_PACKAGE_CONFIG_FILE
+                EXPORT_NAMES ${PROJECT_NAME})
+
+if(${PROJECT_NAME}_BUILD_EXAMPLES)
+    add_subdirectory(example)
+endif()
+
+if(${PROJECT_NAME}_BUILD_TESTS AND BUILD_TESTING)
+    add_subdirectory(test)
+endif()
 
 #-----
 
