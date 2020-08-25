@@ -10,7 +10,7 @@ See [task board](https://app.gitkraken.com/glo/board/Xn4X4e25-QApB8nO) for futur
 # Install #
 ## Requirements ##
 Binaries:
-- A C++17 compiler (ex: g++-9)
+- A C++20 compiler (ex: g++-10)
 - CMake 3.16 or later
 
 Libraries:
@@ -29,6 +29,13 @@ cmake -DCMAKE_BUILD_TYPE=Debug -P cmake_quick_install.cmake
 
 See custom install on [wiki](https://github.com/arapelle/strn/wiki/Install#custom-install).
 
+## Uninstall ##
+There is a uninstall cmake script created during installation. You can use it to uninstall properly this library.
+```
+cd /path/to/installed-strn/
+cmake -P cmake_uninstall.cmake
+```
+
 # How to use
 ## Example - "Hi world"
 ```c++
@@ -43,8 +50,6 @@ int main()
     return EXIT_SUCCESS;
 }
 ```
-
-To compile : `g++ example.cpp -o output -std=c++17 -lstrn`
 
 ## Example - As a map key
 ```c++
