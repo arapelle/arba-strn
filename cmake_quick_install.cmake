@@ -21,7 +21,7 @@ set(params DIR BUILD)
 set(lists "")
 cmake_parse_arguments(ARG "${options}" "${params}" "${lists}" ${args})
 
-set(project "cpp_lib")
+set(project "strn")
 
 if(WIN32)
     set(temp_dir $ENV{TEMP})
