@@ -3,7 +3,8 @@ cmake_minimum_required(VERSION 3.16)
 project(basic_cmake_project)
 
 # Find package strn:
-find_package(strn 0.1.0 CONFIG REQUIRED)
+find_package(strn 0.1.1 CONFIG REQUIRED)
+
 # Here, strn is used as a PRIVATE dependency
 add_executable(${PROJECT_NAME} main.cpp)
 # Use strn release shared library:
