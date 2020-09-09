@@ -17,7 +17,7 @@ set_build_type_if_undefined()
 # C++ PROJECT
 
 project(strn
-        VERSION 0.1.3
+        VERSION 0.1.4
         DESCRIPTION "A C++ library providing short trivially comparable string classes whose hash are trivially computable."
         HOMEPAGE_URL "https://github.com/arapelle/strn"
         LANGUAGES CXX)
@@ -53,6 +53,7 @@ set(sources
 add_cpp_library(${PROJECT_NAME} ${PROJECT_NAME}_BUILD_SHARED_LIB ${PROJECT_NAME}_BUILD_STATIC_LIB
     SHARED ${PROJECT_NAME}
     STATIC ${PROJECT_NAME}-static
+    NAMESPACE arba::
     CXX_STANDARD 20
     INCLUDE_DIRECTORIES include
     OUTPUT_VERSION_HEADER "version.hpp"
@@ -65,7 +66,7 @@ add_cpp_library(${PROJECT_NAME} ${PROJECT_NAME}_BUILD_SHARED_LIB ${PROJECT_NAME}
 install_cpp_library_targets(${PROJECT_NAME}
                             TARGETS ${project_targets}
                             INCLUDE_DIRECTORIES "include/${PROJECT_NAME}"
-                            NAMESPACE strn::
+                            NAMESPACE arba::
                             )
 
 # Install package
