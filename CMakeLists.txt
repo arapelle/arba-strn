@@ -28,9 +28,11 @@ message(STATUS "PROJECT : ${PROJECT_NAME} ${PROJECT_VERSION}")
 
 #-----
 include(CTest)
+include(CodeCoverage)
 
 # Project options
 library_build_options(${PROJECT_NAME} STATIC SHARED EXAMPLE TEST)
+append_coverage_compiler_flags()
 
 # Headers:
 set(headers
@@ -80,6 +82,12 @@ endif()
 
 if(${PROJECT_NAME}_BUILD_TESTS AND BUILD_TESTING)
     add_subdirectory(test)
+    setup_target_for_coverage_gcovr_html(
+        NAME ctest_cov
+        EXECUTABLE ctest
+        DEPENDENCIES string32_tests string56_tests string64_tests
+        BASE_DIRECTORY "."
+        )
 endif()
 
 #-----
