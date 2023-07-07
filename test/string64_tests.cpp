@@ -374,10 +374,3 @@ TEST(string64_tests, test_constexpr)
     }
     FAIL() << "constexpr test des not work.";
 }
-
-int main(int argc, char** argv)
-{
-    ::testing::InitGoogleTest(&argc, argv);
-
-    return RUN_ALL_TESTS();
-}
