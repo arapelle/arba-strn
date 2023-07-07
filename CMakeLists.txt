@@ -17,7 +17,7 @@ set_build_type_if_undefined()
 # C++ PROJECT
 
 project(strn
-        VERSION 0.1.5
+        VERSION 0.2.0
         DESCRIPTION "A C++ library providing short trivially comparable string classes whose hash are trivially computable."
         HOMEPAGE_URL "https://github.com/arapelle/strn"
         LANGUAGES CXX)
