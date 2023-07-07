@@ -7,6 +7,7 @@
 #include <string>
 #include <array>
 #include <functional>
+#include <cstdint>
 
 namespace strn
 {
