@@ -1,4 +1,4 @@
-# cmake -P cmake_quick_install.cmake
+# cmake -P quick_install.cmake
 
 function(get_script_args script_args)
     set(sc_args)
@@ -32,7 +32,7 @@ else()
 endif()
 
 file(TO_NATIVE_PATH "/" path_sep)
-set(src_dir ${CMAKE_CURRENT_LIST_DIR})
+set(src_dir ${CMAKE_CURRENT_LIST_DIR}/../..)
 set(build_dir ${temp_dir}${path_sep}${project}-build)
 set(error_file ${build_dir}${path_sep}quick_install_error)
 
