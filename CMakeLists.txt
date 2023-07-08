@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.23)
+cmake_minimum_required(VERSION 3.26)
 
 # CMAKE INCLUDES
 
@@ -69,7 +69,7 @@ install_cpp_library(
 
 ## Install project package
 install_library_package(${PROJECT_NAME}
-                        INPUT_PACKAGE_CONFIG_FILE CMake-package-config.cmake.in
+                        INPUT_PACKAGE_CONFIG_FILE cmake/config/package-config.cmake.in
 )
 install_uninstall_script(${PROJECT_NAME})
 
