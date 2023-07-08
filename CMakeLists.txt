@@ -34,19 +34,19 @@ generate_version_macro_header(generated_version_header
 
 ## Headers:
 set(headers
-    include/strn/c_str_traits.hpp
-    include/strn/io.hpp
-    include/strn/string32.hpp
-    include/strn/string56.hpp
-    include/strn/string64.hpp
+    include/arba/strn/c_str_traits.hpp
+    include/arba/strn/string64.hpp
+    include/arba/strn/string56.hpp
+    include/arba/strn/string32.hpp
+    include/arba/strn/io.hpp
 )
 
 ## Sources:
 set(sources
-    src/io.cpp
-    src/string32.cpp
-    src/string56.cpp
     src/string64.cpp
+    src/string56.cpp
+    src/string32.cpp
+    src/io.cpp
 )
 
 ## Add C++ library:
@@ -62,9 +62,9 @@ add_cpp_library(
 
 ## Install C++ library:
 install_cpp_library(
-  SHARED ${PROJECT_NAME}
-  STATIC ${PROJECT_NAME}-static
-  EXPORT ${PROJECT_NAME}-targets
+    SHARED ${PROJECT_NAME}
+    STATIC ${PROJECT_NAME}-static
+    EXPORT ${PROJECT_NAME}-targets
 )
 
 ## Install project package

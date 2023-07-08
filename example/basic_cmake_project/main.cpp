@@ -1,9 +1,8 @@
-
 #include <cstdlib>
 #include <iostream>
-#include <strn/version.hpp>
-#include <strn/string64.hpp>
-#include <strn/io.hpp>
+#include <arba/strn/version.hpp>
+#include <arba/strn/string64.hpp>
+#include <arba/strn/io.hpp>
 
 int main()
 {

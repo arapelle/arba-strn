@@ -1,5 +1,5 @@
-#include <strn/io.hpp>
-#include <strn/string56.hpp>
+#include <arba/strn/io.hpp>
+#include <arba/strn/string56.hpp>
 #include <gtest/gtest.h>
 #include <sstream>
 #include <cstdlib>

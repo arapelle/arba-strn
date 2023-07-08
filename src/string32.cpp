@@ -1,4 +1,4 @@
-#include <strn/string32.hpp>
+#include <arba/strn/string32.hpp>
 
 namespace strn
 {

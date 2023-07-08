@@ -1,7 +1,7 @@
-#include <strn/io.hpp>
-#include <strn/string64.hpp>
-#include <strn/string56.hpp>
-#include <strn/string32.hpp>
+#include <arba/strn/io.hpp>
+#include <arba/strn/string64.hpp>
+#include <arba/strn/string56.hpp>
+#include <arba/strn/string32.hpp>
 #include <string>
 #include <iostream>
 #include <locale>
