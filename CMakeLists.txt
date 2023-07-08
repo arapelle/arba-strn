@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.23)
 
 # CMAKE INCLUDES
 
-list(PREPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/)
+list(PREPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/external/cmake/)
 include(CMakePrintHelpers)
 include(cmtk/CppLibraryProject)
 
@@ -15,7 +15,7 @@ set_build_type_ifndef()
 
 set(PROJECT_NAME "arba-strn")
 set(project_namespace "arba")
-set(project_feature_name "strn")
+set(project_base_name "strn")
 set(PROJECT_VERSION 0.2.0)
 project(${PROJECT_NAME}
         VERSION ${PROJECT_VERSION}
@@ -29,8 +29,8 @@ include(CTest)
 
 ## Generated/Configured headers:
 generate_version_macro_header(generated_version_header
-                              ${project_namespace}_${project_feature_name}
-                              ${project_namespace}/${project_feature_name}/version.hpp)
+                              ${project_namespace}_${project_base_name}
+                              ${project_namespace}/${project_base_name}/version.hpp)
 
 ## Headers:
 set(headers
