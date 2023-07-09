@@ -3,50 +3,44 @@
 The purpose is to provide a short string class (8 bytes max) whose hash is trivially computable
 (no loop operation), and comparison operations are trivial too (no loop operation again).
 
-See [wiki](https://github.com/arapelle/strn/wiki) for more details.
-
-See [task board](https://app.gitkraken.com/glo/board/Xn4X4e25-QApB8nO) for future updates and features.
-
 # Install #
 ## Requirements ##
 Binaries:
 - A C++20 compiler (ex: g++-13)
 - CMake 3.26 or later
 
-Libraries:
-- [Google Test](https://github.com/google/googletest) 1.10 or later (only for testing)
+Testing Libraries (optional):
+- [Google Test](https://github.com/google/googletest) 1.13 or later (optional)
 
 ## Clone
 
 ```
-git clone https://github.com/arapelle/strn --recurse-submodules
+git clone https://github.com/arapelle/arba-strn --recurse-submodules
 ```
 
 ## Quick Install ##
 There is a cmake script at the root of the project which builds the library in *Release* mode and install it (default options are used).
 ```
-cd /path/to/strn
-cmake -P cmake_quick_install.cmake
+cd /path/to/arba-strn
+cmake -P cmake/scripts/quick_install.cmake
 ```
 Use the following to quickly install a different mode.
 ```
-cmake -DCMAKE_BUILD_TYPE=Debug -P cmake/scripts/quick_install.cmake
+cmake -P cmake/scripts/quick_install.cmake -- TESTS BUILD Debug DIR /tmp/local
 ```
-
-See custom install on [wiki](https://github.com/arapelle/strn/wiki/Install#custom-install).
 
 ## Uninstall ##
 There is a uninstall cmake script created during installation. You can use it to uninstall properly this library.
 ```
-cd /path/to/installed-strn/
-cmake -P cmake_uninstall.cmake
+cd /path/to/installed-arba-strn/
+cmake -P uninstall.cmake
 ```
 
 # How to use
 ## Example - "Hi world"
 ```c++
-#include <strn/string64.hpp>
-#include <strn/io.hpp>
+#include <arba/strn/string64.hpp>
+#include <arba/strn/io.hpp>
 #include <iostream>
 
 int main()
@@ -59,8 +53,8 @@ int main()
 
 ## Example - As a map key
 ```c++
-#include <strn/string64.hpp>
-#include <strn/io.hpp>
+#include <arba/strn/string64.hpp>
+#include <arba/strn/io.hpp>
 #include <unordered_map>
 #include <iostream>
 
@@ -78,8 +72,8 @@ int main()
 }
 ```
 ## Example - Using *strn* in a CMake project
-See the [basic cmake project](https://github.com/arapelle/strn/tree/master/example/basic_cmake_project) example, and more specifically the [CMakeLists.txt](https://github.com/arapelle/strn/tree/master/example/basic_cmake_project/CMakeLists.txt) to see how to use *strn* in your CMake projects.
+See *basic_cmake_project* in example, and more specifically the *CMakeLists.txt to see how to use *strn* in your CMake projects.
 
 # License
 
-[MIT License](./LICENSE.md) © strn
+[MIT License](./LICENSE.md) © arba-strn
