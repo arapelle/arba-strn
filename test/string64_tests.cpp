@@ -8,7 +8,7 @@ using namespace strn::literals;
 
 TEST(string64_tests, test_constructor_integer)
 {
-    strn::string64::uint ival(0x1122334455667788);
+    arba::strn::string64::uint ival(0x1122334455667788);
     strn::string64 str(ival);
     ASSERT_EQ(str.integer(), ival);
     ASSERT_EQ(str.hash(), static_cast<std::size_t>(ival));

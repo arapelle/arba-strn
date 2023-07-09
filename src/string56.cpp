@@ -1,7 +1,10 @@
 #include <arba/strn/string56.hpp>
 
+inline namespace arba
+{
 namespace strn
 {
+
 string56::string56(const std::string_view& str)
     : string56()
 {
@@ -50,4 +53,5 @@ void string56::resize(std::size_t new_length, char new_ch)
     cstr_.back() = new_length;
 }
 
+}
 }

@@ -6,7 +6,9 @@
 
 int main()
 {
-    strn::string64 str("hi!");
+    arba::strn::string64 str("hi!");
+    strn::string64 str2("hello!");
     std::cout << str << std::endl;
+    std::cout << str2 << std::endl;
     return EXIT_SUCCESS;
 }

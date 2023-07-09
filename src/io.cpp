@@ -6,8 +6,11 @@
 #include <iostream>
 #include <locale>
 
+inline namespace arba
+{
 namespace strn
 {
+
 std::ostream& operator<<(std::ostream& stream, const string64& str)
 {
     uint8_t i = 0;
@@ -82,4 +85,5 @@ std::istream& operator>>(std::istream& stream, string32& str)
     return stream;
 }
 
+}
 }

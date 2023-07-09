@@ -8,8 +8,11 @@
 #include <functional>
 #include <cstdint>
 
+inline namespace arba
+{
 namespace strn
 {
+
 /**
  * @brief The string64 class
  */
@@ -169,16 +172,20 @@ inline constexpr Enum string64_to_enum(const string64& str)
 {
     return static_cast<Enum>(str.integer());
 }
+
+}
 }
 
 namespace std
 {
+
 /**
  * @brief The hash<strn::string64> struct specialization
  */
 template <>
-struct hash<strn::string64>
+struct hash< ::arba::strn::string64>
 {
-    inline std::size_t operator() (const strn::string64& value) const { return value.hash(); }
+    inline std::size_t operator() (const ::arba::strn::string64& value) const { return value.hash(); }
 };
+
 }

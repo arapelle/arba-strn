@@ -1,7 +1,10 @@
 #include <arba/strn/string64.hpp>
 
+inline namespace arba
+{
 namespace strn
 {
+
 string64::string64(const std::string_view& str)
     : string64()
 {
@@ -63,4 +66,5 @@ void string64::resize(std::size_t new_length, char new_ch)
         *iter = 0;
 }
 
+}
 }
