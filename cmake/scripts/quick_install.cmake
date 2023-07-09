@@ -31,10 +31,9 @@ else()
     message(FATAL_ERROR "No temporary directory found!")
 endif()
 
-file(TO_NATIVE_PATH "/" path_sep)
 set(src_dir ${CMAKE_CURRENT_LIST_DIR}/../..)
-set(build_dir ${temp_dir}${path_sep}${project}-build)
-set(error_file ${build_dir}${path_sep}quick_install_error)
+set(build_dir ${temp_dir}/local/build/${project}-build)
+set(error_file ${build_dir}/quick_install_error)
 
 if(EXISTS ${error_file})
     message(STATUS "Previous call to quick_install.cmake failed. Cleaning...")
