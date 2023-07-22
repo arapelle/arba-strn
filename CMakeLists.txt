@@ -53,8 +53,8 @@ set(sources
 add_cpp_library(
     SHARED ${PROJECT_NAME}
     STATIC ${PROJECT_NAME}-static
-    BUILD_SHARED OPTION
-    BUILD_STATIC OPTION
+    BUILD_SHARED BUILD_arba-arba
+    BUILD_STATIC BUILD_arba-arba-static
     HEADERS ${headers} ${generated_version_header}
     SOURCES ${sources}
     CXX_STANDARD 20
