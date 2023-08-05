@@ -5,6 +5,7 @@ The purpose is to provide a short string class (8 bytes max) whose hash is trivi
 
 # Install #
 ## Requirements ##
+
 Binaries:
 - A C++20 compiler (ex: g++-13)
 - CMake 3.26 or later
@@ -71,8 +72,8 @@ int main()
     return EXIT_SUCCESS;
 }
 ```
-## Example - Using *strn* in a CMake project
-See *basic_cmake_project* in example, and more specifically the *CMakeLists.txt to see how to use *strn* in your CMake projects.
+## Example - Using *arba-strn* in a CMake project
+See *basic_cmake_project* in example, and more specifically the *CMakeLists.txt to see how to use *arba-strn* in your CMake projects.
 
 # License
 
