@@ -1,13 +1,14 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.26)
+
+include(CMakePrintHelpers)
 
 project(basic_cmake_project)
 
-# Find package strn:
-find_package(strn 0.1.5 CONFIG REQUIRED)
-
-# Here, strn is used as a PRIVATE dependency
 add_executable(${PROJECT_NAME} main.cpp)
-# Use strn release shared library:
-target_link_libraries(${PROJECT_NAME} PRIVATE arba::strn)
-# Use strn release static library:
-#target_link_libraries(${PROJECT_NAME} PRIVATE arba::strn-static)
+add_executable(${PROJECT_NAME}-static main.cpp)
+# Find package arba-strn:
+find_package(arba-strn 0.2.0 CONFIG REQUIRED)
+# Use arba-strn release shared target:
+target_link_libraries(${PROJECT_NAME} PRIVATE arba-strn)
+# Use arba-strn release static target:
+target_link_libraries(${PROJECT_NAME}-static PRIVATE arba-strn-static)

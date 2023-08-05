@@ -1,5 +1,5 @@
-#include <strn/io.hpp>
-#include <strn/string32.hpp>
+#include <arba/strn/io.hpp>
+#include <arba/strn/string32.hpp>
 #include <gtest/gtest.h>
 #include <sstream>
 #include <cstdlib>
@@ -373,11 +373,4 @@ TEST(string32_tests, test_constexpr)
         return;
     }
     FAIL() << "constexpr test des not work.";
-}
-
-int main(int argc, char** argv)
-{
-    ::testing::InitGoogleTest(&argc, argv);
-
-    return RUN_ALL_TESTS();
 }

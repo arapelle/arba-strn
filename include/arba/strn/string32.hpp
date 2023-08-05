@@ -1,22 +1,25 @@
 #pragma once
 
-#include <strn/version.hpp>
 #include "c_str_traits.hpp"
 #include <cstring>
 #include <string_view>
 #include <string>
 #include <array>
 #include <functional>
+#include <cstdint>
 
+inline namespace arba
+{
 namespace strn
 {
+
 /**
- * @brief The string64 class
+ * @brief The string32 class
  */
-class string64
+class string32
 {
 public:
-    using uint = uint64_t;
+    using uint = uint32_t;
 
 private:
     inline constexpr static std::size_t buffer_size_ = sizeof(uint);
@@ -28,67 +31,66 @@ public:
     using const_iterator = buffer_type_::const_iterator;
 
     /**
-     * @brief string64
+     * @brief string32
      * @param value
      *
-     * strn::string64 s64();
-     * strn::string64 s64(1235);
+     * strn::string32 s32();
+     * strn::string32 s32(1235);
      */
-    inline constexpr explicit string64(uint value = 0)
+    inline constexpr explicit string32(uint value = 0)
         : integer_(value)
     {}
 
     /**
-     * @brief string64
+     * @brief string32
      * @param str
      *
      * std::string_view strv;
-     * strn::string64 s64(strv);
+     * strn::string32 s32(strv);
      */
-    explicit string64(const std::string_view& str);
+    explicit string32(const std::string_view& str);
 
     /**
-     * @brief string64
+     * @brief string32
      * @param str
      *
      * std::string str;
-     * strn::string64 s64(str);
+     * strn::string32 s32(str);
      */
-    inline explicit string64(const std::string& str)
-        : string64(std::string_view(str))
+    inline explicit string32(const std::string& str)
+        : string32(std::string_view(str))
     {}
 
     /**
-     * @brief string64
+     * @brief string32
      * @param cstr
      *
-     * strn::string64 s64("123A5678");
+     * strn::string32 s32("12E4");
      */
     template <typename T, typename Tr = c_str_n_traits<T>,
             std::enable_if_t<Tr::length <= max_input_c_str_length_ && is_c_str_n_v<T>, int> = 0>
-    string64(const T& cstr)
-      : cstr_{cstr[0], Tr::template nth<1>(cstr), Tr::template nth<2>(cstr), Tr::template nth<3>(cstr),
-                       Tr::template nth<4>(cstr), Tr::template nth<5>(cstr), Tr::template nth<6>(cstr), Tr::template nth<7>(cstr)}
+    string32(const T& cstr)
+      : cstr_{cstr[0], Tr::template nth<1>(cstr), Tr::template nth<2>(cstr), Tr::template nth<3>(cstr)}
     {}
 
     /**
-     * strn::string64 s64("123A56789");
+     * strn::string32 s32("12E45");
      */
     template <typename T, typename Tr = c_str_n_traits<T>,
             std::enable_if_t<(!(Tr::length <= max_input_c_str_length_)) && is_c_str_n_v<T>, int> = 0>
-    string64(const T& cstr) = delete;
+    string32(const T& cstr) = delete;
 
     /**
-     * @brief string64
+     * @brief string32
      * @param cstr
      *
      * std::string str;
      * const char* cstr = str.c_str();
-     * strn::string64 s64(cstr);
+     * strn::string32 s32(cstr);
      */
     template <typename T, std::enable_if_t<is_c_str_v<T>, int> = 0>
-    explicit string64(const T& cstr)
-      : string64(std::string_view(cstr))
+    explicit string32(const T& cstr)
+      : string32(std::string_view(cstr))
     {}
 
     inline constexpr const uint& integer() const { return integer_; }
@@ -108,9 +110,9 @@ public:
     bool is_printable() const;
     inline const char& operator[](std::size_t index) const { return cstr_[index]; }
     inline char& operator[](std::size_t index) { return cstr_[index]; }
-    inline constexpr bool operator==(const string64& rhs) const { return integer_ == rhs.integer_; }
-    inline constexpr bool operator!=(const string64& rhs) const { return integer_ != rhs.integer_; }
-    inline constexpr bool operator<(const string64& rhs) const { return integer_ < rhs.integer_; }
+    inline constexpr bool operator==(const string32& rhs) const { return integer_ == rhs.integer_; }
+    inline constexpr bool operator!=(const string32& rhs) const { return integer_ != rhs.integer_; }
+    inline constexpr bool operator<(const string32& rhs) const { return integer_ < rhs.integer_; }
     void push_back(const char &ch);
     void pop_back();
     inline void clear() { integer_ = 0; }
@@ -123,62 +125,66 @@ private:
         uint integer_ = 0;
     };
 };
-static_assert(sizeof(string64::uint) == sizeof(uint64_t));
-static_assert(sizeof(string64) == sizeof(string64::uint));
+static_assert(sizeof(string32::uint) == sizeof(uint32_t));
+static_assert(sizeof(string32) == sizeof(string32::uint));
 
 inline namespace literals
 {
-/// operator"" _s64
-inline constexpr string64 operator"" _s64(const char* cstr, std::size_t len)
+/// operator"" _s32
+inline constexpr string32 operator"" _s32(const char* cstr, std::size_t len)
 {
-    if (len <= string64::max_length())
+    if (len <= string32::max_length())
     {
-        string64::uint value = 0;
+        string32::uint value = 0;
         for (uint8_t i = 0; i < sizeof(std::size_t) && i < len; ++i)
         {
-            string64::uint vi = static_cast<std::size_t>(cstr[i]);
+            string32::uint vi = static_cast<std::size_t>(cstr[i]);
             vi <<= (8*i);
             value |= vi;
         }
-        return string64(value);
+        return string32(value);
     }
-    return string64("#BAD_S64");
+    return string32("#BAD");
 }
 }
 
-// To/from enum 64
+// To/from enum 32
 
 
 template <class T>
-inline constexpr bool is_enum64_v = std::is_enum_v<T> && (sizeof(T) == sizeof(string64));
+inline constexpr bool is_enum32_v = std::is_enum_v<T> && (sizeof(T) == sizeof(string32));
 
-template <class Enum, std::enable_if_t<is_enum64_v<Enum>, int> = 0>
-inline constexpr string64 enum64_to_string64(const Enum& e)
+template <class Enum, std::enable_if_t<is_enum32_v<Enum>, int> = 0>
+inline constexpr string32 enum32_to_string32(const Enum& e)
 {
-    return string64(static_cast<string64::uint>(e));
+    return string32(static_cast<string32::uint>(e));
 }
 
-template <class Enum, std::enable_if_t<is_enum64_v<Enum>, int> = 0>
-inline std::string enum64_to_string(const Enum& e)
+template <class Enum, std::enable_if_t<is_enum32_v<Enum>, int> = 0>
+inline std::string enum32_to_string(const Enum& e)
 {
-    return enum64_to_string64(e).to_string();
+    return enum32_to_string32(e).to_string();
 }
 
-template <class Enum, std::enable_if_t<is_enum64_v<Enum>, int> = 0>
-inline constexpr Enum string64_to_enum(const string64& str)
+template <class Enum, std::enable_if_t<is_enum32_v<Enum>, int> = 0>
+inline constexpr Enum enum32_to_enum(const string32& str)
 {
     return static_cast<Enum>(str.integer());
+}
+
 }
 }
 
 namespace std
 {
+
 /**
- * @brief The hash<strn::string64> struct specialization
+ * @brief The hash<strn::string32> struct specialization
  */
 template <>
-struct hash<strn::string64>
+struct hash< ::arba::strn::string32>
 {
-    inline std::size_t operator() (const strn::string64& value) const { return value.hash(); }
+    inline std::size_t operator() (const ::arba::strn::string32& value) const { return value.hash(); }
 };
+
 }

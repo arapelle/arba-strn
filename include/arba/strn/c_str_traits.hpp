@@ -2,8 +2,11 @@
 
 #include <type_traits>
 
+inline namespace arba
+{
 namespace strn
 {
+
 template <typename T>
 struct c_str_n_traits
 {
@@ -46,4 +49,6 @@ struct is_c_str<char[N]> : public std::false_type
 
 template <class T>
 inline constexpr bool is_c_str_v = is_c_str<T>::value;
+
+}
 }

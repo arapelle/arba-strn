@@ -1,7 +1,10 @@
-#include <strn/string32.hpp>
+#include <arba/strn/string32.hpp>
 
+inline namespace arba
+{
 namespace strn
 {
+
 string32::string32(const std::string_view& str)
     : string32()
 {
@@ -63,4 +66,5 @@ void string32::resize(std::size_t new_length, char new_ch)
         *iter = 0;
 }
 
+}
 }
