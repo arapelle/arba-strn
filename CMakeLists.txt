@@ -16,7 +16,7 @@ set_build_type_ifndef()
 set(PROJECT_NAME "arba-strn")
 set(project_namespace "arba")
 set(project_base_name "strn")
-set(PROJECT_VERSION 0.2.0)
+set(PROJECT_VERSION 0.3.0)
 project(${PROJECT_NAME}
         VERSION ${PROJECT_VERSION}
         DESCRIPTION "A C++ library providing short trivially comparable string classes whose hash are trivially computable."
@@ -35,18 +35,19 @@ generate_version_macro_header(generated_version_header
 ## Headers:
 set(headers
     include/arba/strn/c_str_traits.hpp
-    include/arba/strn/string64.hpp
-    include/arba/strn/string56.hpp
-    include/arba/strn/string32.hpp
     include/arba/strn/io.hpp
+    include/arba/strn/string32.hpp
+    include/arba/strn/string56.hpp
+    include/arba/strn/string64.hpp
+    include/arba/strn/string_n_helper.hpp
 )
 
 ## Sources:
 set(sources
-    src/string64.cpp
-    src/string56.cpp
-    src/string32.cpp
     src/io.cpp
+    src/string32.cpp
+    src/string56.cpp
+    src/string64.cpp
 )
 
 ## Add C++ library:

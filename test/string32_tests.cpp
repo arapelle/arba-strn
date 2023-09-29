@@ -6,21 +6,23 @@
 
 using namespace strn::literals;
 
-TEST(string32_tests, test_constructor_integer)
+TEST(string32_tests, test_s32_literal)
 {
-    strn::string32::uint ival(0x11223344);
-    strn::string32 str(ival);
-    ASSERT_EQ(str.integer(), ival);
-    ASSERT_EQ(str.hash(), static_cast<std::size_t>(ival));
+    strn::string32::uint ival = "c234"_s32.integer();
+    std::size_t expected_val = ('c'|('2'<<8)|('3'<<16)|('4'<<24));
+    ASSERT_EQ(ival, expected_val);
 }
 
-TEST(string32_tests, test_s64_literal)
+TEST(string32_tests, test_s32_literal_small)
 {
-    strn::string32::uint ival = "c2E4"_s32.integer();
-    ASSERT_EQ(ival, ('c'|('2'<<8)|('E'<<16)|('4'<<24)));
-
     strn::string32::uint small_ival = "c12"_s32.integer();
-    ASSERT_EQ(small_ival, ('c'|('1'<<8)|('2'<<16)));
+    ASSERT_EQ(small_ival, ( 'c'|('1'<<8)|('2'<<16) ));
+}
+
+TEST(string32_tests, test_s32_empty_literal)
+{
+    strn::string32::uint ival = ""_s32.integer();
+    ASSERT_EQ(ival, 0);
 }
 
 TEST(string32_tests, test_constructor_empty)
@@ -28,28 +30,53 @@ TEST(string32_tests, test_constructor_empty)
     strn::string32 str32;
     ASSERT_EQ(str32.integer(), 0);
     ASSERT_EQ(str32.hash(), 0);
+    ASSERT_TRUE(str32.empty());
+    ASSERT_FALSE(str32.not_empty());
+}
+
+TEST(string32_tests, test_constructor_empty_std_string_view)
+{
+    std::string str("");
+    std::string_view strv(str);
+    strn::string32 str32(strv);
+    ASSERT_EQ(str32.integer(), 0);
+    ASSERT_EQ(str32.hash(), 0);
+    ASSERT_TRUE(str32.empty());
+    ASSERT_FALSE(str32.not_empty());
 }
 
 TEST(string32_tests, test_constructor_std_string_view)
 {
-    std::string str(".2E4");
+    std::string str(".234");
     std::string_view strv(str);
     strn::string32 str32(strv);
-    ASSERT_EQ(str32.integer(), ".2E4"_s32.integer());
-    ASSERT_EQ(str32.hash(), ".2E4"_s32.hash());
+    ASSERT_EQ(str32[0], '.');
+    ASSERT_EQ(str32[1], '2');
+    ASSERT_EQ(str32[2], '3');
+    ASSERT_EQ(str32[3], '4');
+    ASSERT_EQ(str32.integer(), ".234"_s32.integer());
+    ASSERT_EQ(str32.hash(), ".234"_s32.hash());
 
     std::string small_str("c12");
     std::string_view small_strv(small_str);
     strn::string32 small_str32(small_strv);
+    ASSERT_EQ(small_str32[0], 'c');
+    ASSERT_EQ(small_str32[1], '1');
+    ASSERT_EQ(small_str32[2], '2');
+    ASSERT_EQ(small_str32[3], '\0');
     ASSERT_EQ(small_str32.integer(), "c12"_s32.integer());
     ASSERT_EQ(small_str32.hash(), "c12"_s32.hash());
 }
 
 TEST(string32_tests, test_constructor_too_long_std_string_view)
 {
-    std::string str("12345");
+    std::string str("123456789");
     std::string_view strv(str);
     strn::string32 str32(strv);
+    ASSERT_EQ(str32[0], '1');
+    ASSERT_EQ(str32[1], '2');
+    ASSERT_EQ(str32[2], '3');
+    ASSERT_EQ(str32[3], '4');
     ASSERT_EQ(str32.integer(), "1234"_s32.integer());
     ASSERT_EQ(str32.hash(), "1234"_s32.hash());
 }
@@ -92,49 +119,68 @@ TEST(string32_tests, test_const_iterators)
 
 TEST(string32_tests, test_str_correctness)
 {
-    strn::string32 str32("east");
-    ASSERT_EQ(str32.to_string(), "east");
+    strn::string32 str32("art");
+    ASSERT_EQ(str32.to_string(), "art");
     ASSERT_NE(str32.integer(), 0);
     ASSERT_NE(str32.hash(), 0);
-    ASSERT_EQ(str32.integer(), "east"_s32.integer());
-    ASSERT_EQ(str32.hash(), "east"_s32.hash());
+    ASSERT_EQ(str32.integer(), "art"_s32.integer());
+    ASSERT_EQ(str32.hash(), "art"_s32.hash());
 }
 
 TEST(string32_tests, test_constructor_std_string)
 {
-    std::string str("465c");
+    std::string str("46c");
     strn::string32 str32(str);
-    ASSERT_EQ(str32.integer(), "465c"_s32.integer());
-    ASSERT_EQ(str32.hash(), "465c"_s32.hash());
+    ASSERT_EQ(str32.integer(), "46c"_s32.integer());
+    ASSERT_EQ(str32.hash(), "46c"_s32.hash());
 }
 
 TEST(string32_tests, test_constructor_c_str_n)
 {
-    strn::string32 str32("Goal");
-    ASSERT_EQ(str32.integer(), "Goal"_s32.integer());
+    strn::string32 str32("Oven");
+    ASSERT_EQ(str32.integer(), "Oven"_s32.integer());
+    ASSERT_TRUE(str32.not_empty());
 
-    strn::string32 small_str32("^_^");
-    ASSERT_EQ(small_str32.integer(), "^_^"_s32.integer());
+    strn::string32 small_str32("Car");
+    ASSERT_EQ(small_str32.integer(), "Car"_s32.hash());
+    ASSERT_TRUE(str32.not_empty());
+
+    strn::string32 empty_str32("");
+    ASSERT_EQ(empty_str32.integer(), ""_s32.hash());
+    ASSERT_TRUE(empty_str32.empty());
 }
 
 TEST(string32_tests, test_constructor_c_str)
 {
-    const char* cstr = "Aze";
+    const char* cstr = "Tic";
     strn::string32 str32(cstr);
-    ASSERT_EQ(str32.integer(), "Aze"_s32.integer());
+    ASSERT_EQ(str32.integer(), "Tic"_s32.integer());
 }
 
 TEST(string32_tests, test_operator_eq_and_neq)
 {
-    strn::string32 str("Goal");
+    strn::string32 str("art");
     ASSERT_NE(str, ""_s32);
-    ASSERT_NE("Goal"_s32, ""_s32);
-    ASSERT_EQ(str, "Goal"_s32);
-    strn::string32 str2("Ball");
+    ASSERT_NE("art"_s32, ""_s32);
+    ASSERT_EQ(str, "art"_s32);
+    strn::string32 str2("car");
     ASSERT_NE(str, str2);
 }
 
 TEST(string32_tests, test_hash)
+{
+    constexpr strn::string32::uint hash_init_value = 0x11223344;
+    enum hash_enum : strn::string32::uint
+    {
+        hash_value = hash_init_value
+    };
+
+    strn::string32 str2(hash_value);
+    ASSERT_EQ(str2.integer(), hash_init_value);
+    ASSERT_EQ(str2.hash(), static_cast<std::size_t>(hash_init_value));
+}
+
+TEST(string32_tests, test_hash_2)
 {
     strn::string32 str("abcd");
 
@@ -146,25 +192,26 @@ TEST(string32_tests, test_hash)
     default:
         FAIL() << "hash() method does not work.";
     }
+
 }
 
 TEST(string32_tests, test_to_string_view)
 {
-    strn::string32 str32("Goal");
+    strn::string32 str32("art");
     std::string_view strv = str32.to_string_view();
-    ASSERT_EQ(strv, "Goal");
-    str32 = "read"_s32;
-    ASSERT_NE(strv, "Goal");
-    ASSERT_EQ(strv, "read");
+    ASSERT_EQ(strv, "art");
+    str32 = "FRA"_s32;
+    ASSERT_NE(strv, "art");
+    ASSERT_EQ(strv, "FRA");
 }
 
 TEST(string32_tests, test_to_string)
 {
-    strn::string32 str32("Goal");
+    strn::string32 str32("art");
     std::string str = str32.to_string();
-    ASSERT_EQ(str, "Goal");
-    str32 = "read"_s32;
-    ASSERT_EQ(str, "Goal");
+    ASSERT_EQ(str, "art");
+    str32 = "FR"_s32;
+    ASSERT_EQ(str, "art");
 }
 
 TEST(string32_tests, test_empty_or_not)
@@ -172,18 +219,26 @@ TEST(string32_tests, test_empty_or_not)
     strn::string32 str32;
     ASSERT_TRUE(str32.empty());
     ASSERT_TRUE(!str32.not_empty());
-    str32 = "full"_s32;
+    str32 = "son"_s32;
     ASSERT_TRUE(!str32.empty());
     ASSERT_TRUE(str32.not_empty());
 }
 
-TEST(string32_tests, test_length)
+TEST(string32_tests, test_length_empty)
 {
     strn::string32 str32;
     ASSERT_EQ(str32.length(), 0);
-    str32 = "123"_s32;
+}
+
+TEST(string32_tests, test_length_small)
+{
+    strn::string32 str32 = "123"_s32;
     ASSERT_EQ(str32.length(), 3);
-    str32 = "1234"_s32;
+}
+
+TEST(string32_tests, test_length_max)
+{
+    strn::string32 str32 = "1234"_s32;
     ASSERT_EQ(str32.length(), 4);
     static_assert(strn::string32::max_length() == 4);
 }
@@ -192,19 +247,19 @@ TEST(string32_tests, test_is_printable)
 {
     strn::string32 str32("abcd");
     ASSERT_TRUE(str32.is_printable());
-    strn::string32 small_str32("abc");
+    strn::string32 small_str32("ab");
     ASSERT_TRUE(small_str32.is_printable());
-    strn::string32 str32_not_printable("ac\1");
+    strn::string32 str32_not_printable("ab\1");
     ASSERT_FALSE(str32_not_printable.is_printable());
 }
 
 TEST(string32_tests, test_nth)
 {
-    strn::string32 str32("abc1");
-    ASSERT_EQ(str32[2], 'c');
-    str32[1] = 'k';
-    ASSERT_EQ(str32[1], 'k');
-    ASSERT_EQ(str32, "akc1"_s32);
+    strn::string32 str32("ab1");
+    ASSERT_EQ(str32[1], 'b');
+    str32[2] = 'k';
+    ASSERT_EQ(str32[2], 'k');
+    ASSERT_EQ(str32, "abk"_s32);
 }
 
 TEST(string32_tests, test_operator_less)
@@ -239,16 +294,40 @@ TEST(string32_tests, test_push_back_2)
     ASSERT_EQ(last_ch, '4');
 }
 
+TEST(string32_tests, test_push_back_3)
+{
+    strn::string32 str;
+    char ch = 'b';
+    ASSERT_TRUE(str.empty());
+    str.push_back(ch);
+    ASSERT_TRUE(str.not_empty());
+
+    strn::string32 expected_str("b");
+    ASSERT_EQ(str, expected_str);
+    const char& last_ch = *(str.end()-1);
+    ASSERT_EQ(last_ch, 'b');
+}
+
 TEST(string32_tests, test_pop_back)
 {
     strn::string32 str("aaab");
+    ASSERT_TRUE(str.not_empty());
     str.pop_back();
+    ASSERT_TRUE(str.not_empty());
     strn::string32 stra("aaa");
     strn::string32 strb("aaab");
     ASSERT_EQ(str, stra);
     ASSERT_NE(str, strb);
     const char& last_ch = *(str.end()-1);
     ASSERT_EQ(last_ch, 'a');
+}
+
+TEST(string32_tests, test_pop_back_2)
+{
+    strn::string32 str("a");
+    ASSERT_TRUE(str.not_empty());
+    str.pop_back();
+    ASSERT_TRUE(str.empty());
 }
 
 TEST(string32_tests, test_clear)
@@ -262,46 +341,50 @@ TEST(string32_tests, test_clear)
 
 TEST(string32_tests, test_resize_shorter)
 {
-    strn::string32 str("aab");
-    str.resize(1);
-    strn::string32 expected_str("a");
+    strn::string32 str("abc");
+    str.resize(2);
+    strn::string32 expected_str("ab");
     ASSERT_EQ(str, expected_str);
+    ASSERT_EQ(str.length(), 2);
 }
 
 TEST(string32_tests, test_resize_same)
 {
-    strn::string32 str("aab");
+    strn::string32 str("abc");
     str.resize(str.length());
-    strn::string32 expected_str("aab");
+    strn::string32 expected_str("abc");
     ASSERT_EQ(str, expected_str);
+    ASSERT_EQ(str.length(), 3);
 }
 
 TEST(string32_tests, test_resize_longer)
 {
-    strn::string32 str("a");
+    strn::string32 str("ab");
     str.resize(3, 'c');
-    strn::string32 expected_str("acc");
+    strn::string32 expected_str("abc");
     ASSERT_EQ(str, expected_str);
+    ASSERT_EQ(str.length(), 3);
 }
 
 TEST(string32_tests, test_resize_too_much)
 {
-    strn::string32 str("a");
-    str.resize(5, 'c');
-    strn::string32 expected_str("accc");
+    strn::string32 str("abc");
+    str.resize(9, 'c');
+    strn::string32 expected_str("abcc");
     ASSERT_EQ(str, expected_str);
+    ASSERT_EQ(str.length(), str.max_length());
 }
 
 enum number : uint32_t
 {
     ONE = "ONE"_s32.integer(),
-    TWO = "TWO"_s32.integer(),
+    TWO = "TWO"_e32,
 };
 
 enum class color : uint32_t
 {
     PINK = "PINK"_s32.integer(),
-    BLUE = "BLUE"_s32.integer(),
+    BLUE = "BLUE"_e32,
 };
 
 enum class bad_enum32 : uint16_t
@@ -312,49 +395,72 @@ static_assert(strn::is_enum32_v<number>);
 static_assert(strn::is_enum32_v<color>);
 static_assert(!strn::is_enum32_v<bad_enum32>);
 
-TEST(string32_tests, test_enum_to_string_32)
+template <class T>
+    requires requires { T(0); } && requires { T(ONE); }
+constexpr bool constructible_with_enum_but_not_integer() { return false; }
+
+template <class T>
+    requires (!requires { T(0); }) && requires { T(ONE); }
+constexpr bool constructible_with_enum_but_not_integer() { return true; }
+
+static_assert(!constructible_with_enum_but_not_integer<int>());
+static_assert(constructible_with_enum_but_not_integer<strn::string32>());
+
+TEST(string32_tests, test_enum_to_string_64)
 {
-    strn::string32 stra = strn::enum32_to_string32(ONE);
+    strn::string32 stra(ONE);
     ASSERT_EQ(stra, "ONE"_s32);
-    strn::string32 strb = strn::enum32_to_string32(color::PINK);
+    strn::string32 strc = strn::string32(TWO);
+    ASSERT_EQ(strc, "TWO"_s32);
+    strn::string32 strb = strn::string32(color::PINK);
     ASSERT_EQ(strb, "PINK"_s32);
+    strn::string32 strd = strn::string32(color::BLUE);
+    ASSERT_EQ(strd, "BLUE"_s32);
 }
 
 TEST(string32_tests, test_enum_to_string)
 {
-    std::string stra = strn::enum32_to_string(ONE);
+    std::string stra = strn::string32(ONE).to_string();
     ASSERT_EQ(stra, "ONE");
-    std::string strb = strn::enum32_to_string(color::PINK);
+    std::string strc = strn::string32(TWO).to_string();
+    ASSERT_EQ(strc, "TWO");
+    std::string strb = strn::string32(color::PINK).to_string();
     ASSERT_EQ(strb, "PINK");
+    std::string strd = strn::string32(color::BLUE).to_string();
+    ASSERT_EQ(strd, "BLUE");
 }
 
-TEST(string32_tests, test_string_32_to_enum)
+TEST(string32_tests, test_string_64_to_enum)
 {
     strn::string32 stra("ONE");
-    ASSERT_EQ(strn::enum32_to_enum<number>(stra), ONE);
+    ASSERT_EQ(stra.to_enum<number>(), ONE);
+    strn::string32 strc("TWO");
+    ASSERT_EQ(strc.to_enum<number>(), TWO);
     strn::string32 strb("PINK");
-    ASSERT_EQ(strn::enum32_to_enum<color>(strb), color::PINK);
+    ASSERT_EQ(strb.to_enum<color>(), color::PINK);
+    strn::string32 strd("BLUE");
+    ASSERT_EQ(strd.to_enum<color>(), color::BLUE);
 }
 
 TEST(string32_tests, test_std_hash)
 {
     std::hash<strn::string32> std_hash;
-    ASSERT_EQ(std_hash("ask"_s32), "ask"_s32.hash());
+    ASSERT_EQ(std_hash("fine"_s32), "fine"_s32.hash());
 }
 
 TEST(string32_tests, test_operator_read)
 {
-    std::istringstream stream("abcdefghi\t123");
+    std::istringstream stream("abcde\t123");
     strn::string32 str;
     stream >> str;
     ASSERT_EQ(str, "abcd"_s32);
     ASSERT_EQ(str.integer(), "abcd"_s32.integer());
 
-    std::istringstream small_stream("abc\t123");
+    std::istringstream small_stream("ab\t123");
     strn::string32 small_str;
     small_stream >> small_str;
-    ASSERT_EQ(small_str, "abc"_s32);
-    ASSERT_EQ(small_str.integer(), "abc"_s32.integer());
+    ASSERT_EQ(small_str, "ab"_s32);
+    ASSERT_EQ(small_str.integer(), "ab"_s32.integer());
 }
 
 TEST(string32_tests, test_operator_write)
@@ -374,3 +480,15 @@ TEST(string32_tests, test_constexpr)
     }
     FAIL() << "constexpr test des not work.";
 }
+
+TEST(string32_tests, test_constexpr_fail)
+{
+    if constexpr ("abcdefghi"_s32 != ""_s32)
+    {
+        ASSERT_EQ("abcdefghi"_s32, "#BAD"_s32);
+        return;
+    }
+    FAIL() << "constexpr test des not work.";
+}
+
+constexpr strn::string32 constexpr_str = "cexp";

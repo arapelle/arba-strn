@@ -38,7 +38,17 @@ template <class T>
 inline constexpr bool is_c_str_n_v = is_c_str_n<T>::value;
 
 template <typename T>
-struct is_c_str : public std::true_type
+struct is_c_str : public std::false_type
+{
+};
+
+template <>
+struct is_c_str<const char*> : public std::true_type
+{
+};
+
+template <>
+struct is_c_str<char*> : public std::true_type
 {
 };
 
