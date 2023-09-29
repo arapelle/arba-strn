@@ -21,11 +21,30 @@ TEST(string56_tests, test_s56_literal_small)
     ASSERT_EQ(small_ival, ( 'c'|('1'<<8)|('2'<<16)|(std::size_t(3)<<56) ));
 }
 
+TEST(string56_tests, test_s56_empty_literal)
+{
+    strn::string56::uint ival = ""_s56.integer();
+    ASSERT_EQ(ival, 0);
+}
+
 TEST(string56_tests, test_constructor_empty)
 {
     strn::string56 str56;
     ASSERT_EQ(str56.integer(), 0);
     ASSERT_EQ(str56.hash(), 0);
+    ASSERT_TRUE(str56.empty());
+    ASSERT_FALSE(str56.not_empty());
+}
+
+TEST(string56_tests, test_constructor_empty_std_string_view)
+{
+    std::string str("");
+    std::string_view strv(str);
+    strn::string56 str56(strv);
+    ASSERT_EQ(str56.integer(), 0);
+    ASSERT_EQ(str56.hash(), 0);
+    ASSERT_TRUE(str56.empty());
+    ASSERT_FALSE(str56.not_empty());
 }
 
 TEST(string56_tests, test_constructor_std_string_view)
@@ -131,9 +150,15 @@ TEST(string56_tests, test_constructor_c_str_n)
 {
     strn::string56 str56("Pyramid");
     ASSERT_EQ(str56.integer(), "Pyramid"_s56.integer());
+    ASSERT_TRUE(str56.not_empty());
 
     strn::string56 small_str56("Cactus");
     ASSERT_EQ(small_str56.integer(), "Cactus"_s56.hash());
+    ASSERT_TRUE(str56.not_empty());
+
+    strn::string56 empty_str56("");
+    ASSERT_EQ(empty_str56.integer(), ""_s56.hash());
+    ASSERT_TRUE(empty_str56.empty());
 }
 
 TEST(string56_tests, test_constructor_c_str)
@@ -281,16 +306,40 @@ TEST(string56_tests, test_push_back_2)
     ASSERT_EQ(last_ch, '7');
 }
 
+TEST(string56_tests, test_push_back_3)
+{
+    strn::string56 str;
+    char ch = 'b';
+    ASSERT_TRUE(str.empty());
+    str.push_back(ch);
+    ASSERT_TRUE(str.not_empty());
+
+    strn::string56 expected_str("b");
+    ASSERT_EQ(str, expected_str);
+    const char& last_ch = *(str.end()-1);
+    ASSERT_EQ(last_ch, 'b');
+}
+
 TEST(string56_tests, test_pop_back)
 {
     strn::string56 str("aaab");
+    ASSERT_TRUE(str.not_empty());
     str.pop_back();
+    ASSERT_TRUE(str.not_empty());
     strn::string56 stra("aaa");
     strn::string56 strb("aaab");
     ASSERT_EQ(str, stra);
     ASSERT_NE(str, strb);
     const char& last_ch = *(str.end()-1);
     ASSERT_EQ(last_ch, 'a');
+}
+
+TEST(string64_tests, test_pop_back_2)
+{
+    strn::string56 str("a");
+    ASSERT_TRUE(str.not_empty());
+    str.pop_back();
+    ASSERT_TRUE(str.empty());
 }
 
 TEST(string56_tests, test_clear)
@@ -308,6 +357,7 @@ TEST(string56_tests, test_resize_shorter)
     str.resize(4);
     strn::string56 expected_str("aabb");
     ASSERT_EQ(str, expected_str);
+    ASSERT_EQ(str.length(), 4);
 }
 
 TEST(string56_tests, test_resize_same)
@@ -316,6 +366,7 @@ TEST(string56_tests, test_resize_same)
     str.resize(str.length());
     strn::string56 expected_str("aabbcc");
     ASSERT_EQ(str, expected_str);
+    ASSERT_EQ(str.length(), 6);
 }
 
 TEST(string56_tests, test_resize_longer)
@@ -324,6 +375,7 @@ TEST(string56_tests, test_resize_longer)
     str.resize(6, 'c');
     strn::string56 expected_str("aabbcc");
     ASSERT_EQ(str, expected_str);
+    ASSERT_EQ(str.length(), 6);
 }
 
 TEST(string56_tests, test_resize_too_much)
@@ -332,6 +384,7 @@ TEST(string56_tests, test_resize_too_much)
     str.resize(9, 'c');
     strn::string56 expected_str("aabbccc");
     ASSERT_EQ(str, expected_str);
+    ASSERT_EQ(str.length(), str.max_length());
 }
 
 enum number : uint64_t

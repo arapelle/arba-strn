@@ -19,11 +19,30 @@ TEST(string32_tests, test_s32_literal_small)
     ASSERT_EQ(small_ival, ( 'c'|('1'<<8)|('2'<<16) ));
 }
 
+TEST(string32_tests, test_s32_empty_literal)
+{
+    strn::string32::uint ival = ""_s32.integer();
+    ASSERT_EQ(ival, 0);
+}
+
 TEST(string32_tests, test_constructor_empty)
 {
     strn::string32 str32;
     ASSERT_EQ(str32.integer(), 0);
     ASSERT_EQ(str32.hash(), 0);
+    ASSERT_TRUE(str32.empty());
+    ASSERT_FALSE(str32.not_empty());
+}
+
+TEST(string32_tests, test_constructor_empty_std_string_view)
+{
+    std::string str("");
+    std::string_view strv(str);
+    strn::string32 str32(strv);
+    ASSERT_EQ(str32.integer(), 0);
+    ASSERT_EQ(str32.hash(), 0);
+    ASSERT_TRUE(str32.empty());
+    ASSERT_FALSE(str32.not_empty());
 }
 
 TEST(string32_tests, test_constructor_std_string_view)
@@ -120,9 +139,15 @@ TEST(string32_tests, test_constructor_c_str_n)
 {
     strn::string32 str32("Oven");
     ASSERT_EQ(str32.integer(), "Oven"_s32.integer());
+    ASSERT_TRUE(str32.not_empty());
 
     strn::string32 small_str32("Car");
     ASSERT_EQ(small_str32.integer(), "Car"_s32.hash());
+    ASSERT_TRUE(str32.not_empty());
+
+    strn::string32 empty_str32("");
+    ASSERT_EQ(empty_str32.integer(), ""_s32.hash());
+    ASSERT_TRUE(empty_str32.empty());
 }
 
 TEST(string32_tests, test_constructor_c_str)
@@ -269,16 +294,40 @@ TEST(string32_tests, test_push_back_2)
     ASSERT_EQ(last_ch, '4');
 }
 
+TEST(string32_tests, test_push_back_3)
+{
+    strn::string32 str;
+    char ch = 'b';
+    ASSERT_TRUE(str.empty());
+    str.push_back(ch);
+    ASSERT_TRUE(str.not_empty());
+
+    strn::string32 expected_str("b");
+    ASSERT_EQ(str, expected_str);
+    const char& last_ch = *(str.end()-1);
+    ASSERT_EQ(last_ch, 'b');
+}
+
 TEST(string32_tests, test_pop_back)
 {
     strn::string32 str("aaab");
+    ASSERT_TRUE(str.not_empty());
     str.pop_back();
+    ASSERT_TRUE(str.not_empty());
     strn::string32 stra("aaa");
     strn::string32 strb("aaab");
     ASSERT_EQ(str, stra);
     ASSERT_NE(str, strb);
     const char& last_ch = *(str.end()-1);
     ASSERT_EQ(last_ch, 'a');
+}
+
+TEST(string32_tests, test_pop_back_2)
+{
+    strn::string32 str("a");
+    ASSERT_TRUE(str.not_empty());
+    str.pop_back();
+    ASSERT_TRUE(str.empty());
 }
 
 TEST(string32_tests, test_clear)
@@ -296,6 +345,7 @@ TEST(string32_tests, test_resize_shorter)
     str.resize(2);
     strn::string32 expected_str("ab");
     ASSERT_EQ(str, expected_str);
+    ASSERT_EQ(str.length(), 2);
 }
 
 TEST(string32_tests, test_resize_same)
@@ -304,6 +354,7 @@ TEST(string32_tests, test_resize_same)
     str.resize(str.length());
     strn::string32 expected_str("abc");
     ASSERT_EQ(str, expected_str);
+    ASSERT_EQ(str.length(), 3);
 }
 
 TEST(string32_tests, test_resize_longer)
@@ -312,6 +363,7 @@ TEST(string32_tests, test_resize_longer)
     str.resize(3, 'c');
     strn::string32 expected_str("abc");
     ASSERT_EQ(str, expected_str);
+    ASSERT_EQ(str.length(), 3);
 }
 
 TEST(string32_tests, test_resize_too_much)
@@ -320,6 +372,7 @@ TEST(string32_tests, test_resize_too_much)
     str.resize(9, 'c');
     strn::string32 expected_str("abcc");
     ASSERT_EQ(str, expected_str);
+    ASSERT_EQ(str.length(), str.max_length());
 }
 
 enum number : uint32_t

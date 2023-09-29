@@ -21,11 +21,30 @@ TEST(string64_tests, test_s64_literal_small)
     ASSERT_EQ(small_ival, ( 'c'|('1'<<8)|('2'<<16) ));
 }
 
+TEST(string64_tests, test_s64_empty_literal)
+{
+    strn::string64::uint ival = ""_s64.integer();
+    ASSERT_EQ(ival, 0);
+}
+
 TEST(string64_tests, test_constructor_empty)
 {
     strn::string64 str64;
     ASSERT_EQ(str64.integer(), 0);
     ASSERT_EQ(str64.hash(), 0);
+    ASSERT_TRUE(str64.empty());
+    ASSERT_FALSE(str64.not_empty());
+}
+
+TEST(string64_tests, test_constructor_empty_std_string_view)
+{
+    std::string str("");
+    std::string_view strv(str);
+    strn::string64 str64(strv);
+    ASSERT_EQ(str64.integer(), 0);
+    ASSERT_EQ(str64.hash(), 0);
+    ASSERT_TRUE(str64.empty());
+    ASSERT_FALSE(str64.not_empty());
 }
 
 TEST(string64_tests, test_constructor_std_string_view)
@@ -134,9 +153,15 @@ TEST(string64_tests, test_constructor_c_str_n)
 {
     strn::string64 str64("Octogone");
     ASSERT_EQ(str64.integer(), "Octogone"_s64.integer());
+    ASSERT_TRUE(str64.not_empty());
 
     strn::string64 small_str64("Cactus");
     ASSERT_EQ(small_str64.integer(), "Cactus"_s64.hash());
+    ASSERT_TRUE(small_str64.not_empty());
+
+    strn::string64 empty_str64("");
+    ASSERT_EQ(empty_str64.integer(), ""_s64.hash());
+    ASSERT_TRUE(empty_str64.empty());
 }
 
 TEST(string64_tests, test_constructor_c_str)
@@ -283,16 +308,40 @@ TEST(string64_tests, test_push_back_2)
     ASSERT_EQ(last_ch, '8');
 }
 
+TEST(string64_tests, test_push_back_3)
+{
+    strn::string64 str;
+    char ch = 'b';
+    ASSERT_TRUE(str.empty());
+    str.push_back(ch);
+    ASSERT_TRUE(str.not_empty());
+
+    strn::string64 expected_str("b");
+    ASSERT_EQ(str, expected_str);
+    const char& last_ch = *(str.end()-1);
+    ASSERT_EQ(last_ch, 'b');
+}
+
 TEST(string64_tests, test_pop_back)
 {
     strn::string64 str("aaab");
+    ASSERT_TRUE(str.not_empty());
     str.pop_back();
+    ASSERT_TRUE(str.not_empty());
     strn::string64 stra("aaa");
     strn::string64 strb("aaab");
     ASSERT_EQ(str, stra);
     ASSERT_NE(str, strb);
     const char& last_ch = *(str.end()-1);
     ASSERT_EQ(last_ch, 'a');
+}
+
+TEST(string64_tests, test_pop_back_2)
+{
+    strn::string64 str("a");
+    ASSERT_TRUE(str.not_empty());
+    str.pop_back();
+    ASSERT_TRUE(str.empty());
 }
 
 TEST(string64_tests, test_clear)
@@ -310,6 +359,7 @@ TEST(string64_tests, test_resize_shorter)
     str.resize(4);
     strn::string64 expected_str("aabb");
     ASSERT_EQ(str, expected_str);
+    ASSERT_EQ(str.length(), 4);
 }
 
 TEST(string64_tests, test_resize_same)
@@ -318,6 +368,7 @@ TEST(string64_tests, test_resize_same)
     str.resize(str.length());
     strn::string64 expected_str("aabbcc");
     ASSERT_EQ(str, expected_str);
+    ASSERT_EQ(str.length(), 6);
 }
 
 TEST(string64_tests, test_resize_longer)
@@ -326,6 +377,7 @@ TEST(string64_tests, test_resize_longer)
     str.resize(6, 'c');
     strn::string64 expected_str("aabbcc");
     ASSERT_EQ(str, expected_str);
+    ASSERT_EQ(str.length(), 6);
 }
 
 TEST(string64_tests, test_resize_too_much)
@@ -334,6 +386,7 @@ TEST(string64_tests, test_resize_too_much)
     str.resize(9, 'c');
     strn::string64 expected_str("aabbcccc");
     ASSERT_EQ(str, expected_str);
+    ASSERT_EQ(str.length(), str.max_length());
 }
 
 enum number : uint64_t

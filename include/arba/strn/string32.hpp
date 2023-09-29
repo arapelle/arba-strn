@@ -116,7 +116,7 @@ public:
     constexpr std::size_t hash () const { return static_cast<std::size_t>(integer_); }
     constexpr std::string_view to_string_view() const { return std::string_view(cstr_.data(), length()); }
     constexpr std::string to_string() const { return std::string(begin(), end()); }
-    constexpr bool empty() const { return cstr_.front() == '\0'; }
+    constexpr bool empty() const { return integer_ == 0; }
     constexpr bool not_empty() const { return !empty(); }
     constexpr std::size_t length() const { return string_n_helper::string32_length_(integer_); }
     constexpr static std::size_t max_length () { return buffer_size_; }
