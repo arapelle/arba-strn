@@ -1,4 +1,0 @@
-[submodule "cmtk"]
-	path = external/cmake/cmtk
-	url = https://github.com/arapelle/cmtk.git
-	branch = release/0.10.0
