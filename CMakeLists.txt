@@ -16,7 +16,7 @@ set_build_type_ifndef()
 set(PROJECT_NAME "arba-strn")
 set(project_namespace "arba")
 set(project_base_name "strn")
-set(PROJECT_VERSION 0.3.0)
+set(PROJECT_VERSION 0.4.0)
 project(${PROJECT_NAME}
         VERSION ${PROJECT_VERSION}
         DESCRIPTION "A C++ library providing short trivially comparable string classes whose hash are trivially computable."
