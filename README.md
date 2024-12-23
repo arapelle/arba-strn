@@ -1,22 +1,34 @@
 # Concept #
 
-The purpose is to provide a short string class (8 bytes max) whose hash is trivially computable
+The purpose is to provide short string classes (8 bytes max) whose hashs are trivially computable
 (no loop operation), and comparison operations are trivial too (no loop operation again).
 
 # Install #
 ## Requirements ##
 
 Binaries:
-- A C++20 compiler (ex: g++-13)
+- A C++20 compiler (ex: g++-14)
 - CMake 3.26 or later
 
 Testing Libraries (optional):
-- [Google Test](https://github.com/google/googletest) 1.13 or later (optional)
+- [Google Test](https://github.com/google/googletest) 1.14 or later (optional)
 
 ## Clone
 
 ```
 git clone https://github.com/arapelle/arba-strn --recurse-submodules
+```
+
+## Use with `conan`
+
+Create the conan package.
+```
+conan create . --build=missing -c
+```
+Add a requirement in your conanfile project file.
+```python
+    def requirements(self):
+        self.requires("arba-strn/0.4.0")
 ```
 
 ## Quick Install ##
@@ -71,9 +83,6 @@ int main()
         std::cout << entry.first << ": " << entry.second << std::endl;
     return EXIT_SUCCESS;
 }
-```
-## Example - Using *arba-strn* in a CMake project
-See *basic_cmake_project* in example, and more specifically the *CMakeLists.txt to see how to use *arba-strn* in your CMake projects.
 
 # License
 
