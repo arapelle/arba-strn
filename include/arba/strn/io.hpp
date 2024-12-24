@@ -23,5 +23,5 @@ class string32;
 std::ostream& operator<<(std::ostream& stream, const string32& str);
 std::istream& operator>>(std::istream& stream, string32& str);
 
-}
-}
+} // namespace strn
+} // namespace arba

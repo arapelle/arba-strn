@@ -1,8 +1,8 @@
-#include <arba/strn/version.hpp>
-#include <arba/strn/string64.hpp>
 #include <arba/strn/io.hpp>
-#include <unordered_map>
+#include <arba/strn/string64.hpp>
+#include <arba/strn/version.hpp>
 #include <iostream>
+#include <unordered_map>
 
 int main()
 {

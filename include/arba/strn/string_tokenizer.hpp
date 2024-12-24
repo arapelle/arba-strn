@@ -52,14 +52,14 @@ private:
 public:
     inline string_view_token_iterator()
         : is_ch_sep_(nullptr), str_end_iter_(std::string_view().end()), token_begin_iter_(std::string_view().end()),
-        token_end_iter_(std::string_view().end())
+          token_end_iter_(std::string_view().end())
     {
     }
 
     explicit string_view_token_iterator(string_view str, tokenizer_function& is_ch_sep)
         : is_ch_sep_(&is_ch_sep), str_end_iter_(str.end()),
-        token_begin_iter_(std::find_if_not(str.begin(), str_end_iter_, *is_ch_sep_)),
-        token_end_iter_(std::find_if(token_begin_iter_, str_end_iter_, *is_ch_sep_))
+          token_begin_iter_(std::find_if_not(str.begin(), str_end_iter_, *is_ch_sep_)),
+          token_end_iter_(std::find_if(token_begin_iter_, str_end_iter_, *is_ch_sep_))
     {
     }
 
@@ -159,12 +159,12 @@ public:
     str_tokenizer_() = default;
     str_tokenizer_(string_view str, tokenizer_function is_ch_sep)
         : str_tokenizer_function_owner_<tokenizer_function>(std::move(is_ch_sep)),
-        std::ranges::subrange<token_iterator>(token_iterator(str, this->is_ch_sep_), token_iterator())
+          std::ranges::subrange<token_iterator>(token_iterator(str, this->is_ch_sep_), token_iterator())
     {
     }
 };
 
-}
+} // namespace impl
 
 // string_view_tokenizer:
 
@@ -332,5 +332,5 @@ public:
     }
 };
 
-}
-}
+} // namespace strn
+} // namespace arba

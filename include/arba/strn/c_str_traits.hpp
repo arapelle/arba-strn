@@ -15,11 +15,17 @@ struct c_str_n_traits<char[N]>
 {
     inline static constexpr std::size_t length = N;
 
-    template <std::size_t I, std::enable_if_t<!(I>=N), int> = 0>
-    inline constexpr static char nth(const char(& cstr)[N]) { return cstr[I]; }
+    template <std::size_t I, std::enable_if_t<!(I >= N), int> = 0>
+    inline constexpr static char nth(const char (&cstr)[N])
+    {
+        return cstr[I];
+    }
 
-    template <std::size_t I, std::enable_if_t<(I>=N), int> = 0>
-    inline constexpr static char nth(const char(&)[N]) { return '\0'; }
+    template <std::size_t I, std::enable_if_t<(I >= N), int> = 0>
+    inline constexpr static char nth(const char (&)[N])
+    {
+        return '\0';
+    }
 };
 
 template <typename T>
@@ -58,5 +64,5 @@ struct is_c_str<char[N]> : public std::false_type
 template <class T>
 inline constexpr bool is_c_str_v = is_c_str<T>::value;
 
-}
-}
+} // namespace strn
+} // namespace arba
