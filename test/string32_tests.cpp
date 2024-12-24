@@ -476,6 +476,14 @@ TEST(string32_tests, test_operator_write)
     ASSERT_EQ(stream.str(), str.to_string_view());
 }
 
+TEST(string32_tests, test_operator_format)
+{
+    strn::string32 str_a("A12");
+    ASSERT_EQ(std::format("{}", str_a), "A12");
+    strn::string32 str_b("B123");
+    ASSERT_EQ(std::format("{}", str_b), "B123");
+}
+
 TEST(string32_tests, test_constexpr)
 {
     if constexpr ("a"_s32 == "a"_s32)

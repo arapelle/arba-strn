@@ -5,6 +5,7 @@
 
 #include <array>
 #include <cstring>
+#include <format>
 #include <functional>
 #include <string>
 #include <string_view>
@@ -213,14 +214,24 @@ inline constexpr string64::uint operator"" _e64(const char* cstr, std::size_t le
 } // namespace strn
 } // namespace arba
 
-namespace std
-{
 /**
- * @brief The hash<strn::string64> struct specialization
+ * @brief The std::hash<strn::string64> struct specialization
  */
 template <>
-struct hash<arba::strn::string64>
+struct std::hash<arba::strn::string64>
 {
     inline std::size_t operator()(const arba::strn::string64& value) const noexcept { return value.hash(); }
 };
-}
+
+/**
+ * @brief The std::formatter<::arba::strn::string64> struct specialization
+ */
+template <class CharT>
+struct std::formatter<::arba::strn::string64, CharT> : public std::formatter<std::string_view, CharT>
+{
+    template <class FormatContext>
+    auto format(const ::arba::strn::string64& str, FormatContext& ctx) const
+    {
+        return std::formatter<std::string_view, CharT>::format(str.to_string_view(), ctx);
+    }
+};

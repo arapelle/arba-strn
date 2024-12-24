@@ -489,6 +489,14 @@ TEST(string64_tests, test_operator_write)
     ASSERT_EQ(stream.str(), str.to_string_view());
 }
 
+TEST(string64_tests, test_operator_format)
+{
+    strn::string64 str_a("A123");
+    ASSERT_EQ(std::format("{}", str_a), "A123");
+    strn::string64 str_b("B1234567");
+    ASSERT_EQ(std::format("{}", str_b), "B1234567");
+}
+
 TEST(string64_tests, test_constexpr)
 {
     if constexpr ("a"_s64 == "a"_s64)

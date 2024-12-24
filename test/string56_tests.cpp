@@ -487,6 +487,14 @@ TEST(string56_tests, test_operator_write)
     ASSERT_EQ(stream.str(), str.to_string_view());
 }
 
+TEST(string56_tests, test_operator_format)
+{
+    strn::string56 str_a("A123");
+    ASSERT_EQ(std::format("{}", str_a), "A123");
+    strn::string56 str_b("B123456");
+    ASSERT_EQ(std::format("{}", str_b), "B123456");
+}
+
 TEST(string56_tests, test_constexpr)
 {
     if constexpr ("a"_s56 == "a"_s56)
