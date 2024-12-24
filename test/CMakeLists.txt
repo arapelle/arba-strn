@@ -9,4 +9,5 @@ add_cpp_library_basic_tests(${PROJECT_TARGET_NAME} GTest::gtest_main
     string32_tests.cpp
     string56_tests.cpp
     string64_tests.cpp
+    string_tokenizer_tests.cpp
 )

@@ -8,9 +8,7 @@ namespace strn
 {
 
 template <typename T>
-struct c_str_n_traits
-{
-};
+struct c_str_n_traits;
 
 template <std::size_t N>
 struct c_str_n_traits<char[N]>
