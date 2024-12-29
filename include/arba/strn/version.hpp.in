@@ -1,0 +1,15 @@
+#pragma once
+
+#include <arba/vrsn/semver.hpp>
+
+inline namespace @PROJECT_NAMESPACE@
+{
+namespace @PROJECT_BASE_NAME@
+{
+    constexpr ::arba::vrsn::semver version("@PROJECT_SEMANTIC_VERSION@");
+
+#if not defined(NDEBUG) && (defined(__GNUC__) || defined(__GNUG__) || defined(_MSC_VER) || defined(__clang__))
+    #pragma message("@PROJECT_SEMANTIC_VERSION@")
+#endif
+}
+}

@@ -1,24 +1,23 @@
 #include <arba/strn/io.hpp>
 #include <arba/strn/string56.hpp>
+#include <cstdlib>
 #include <gtest/gtest.h>
 #include <sstream>
-#include <cstdlib>
 
 using namespace strn::literals;
 
 TEST(string56_tests, test_s56_literal)
 {
     strn::string56::uint ival = "c234S67"_s56.integer();
-    std::size_t expected_val = ('c'|('2'<<8)|('3'<<16)|('4'<<24)
-                                |(std::size_t('S')<<32)|(std::size_t('6')<<40)
-                                |(std::size_t('7')<<48)|(std::size_t(7)<<56));
+    std::size_t expected_val = ('c' | ('2' << 8) | ('3' << 16) | ('4' << 24) | (std::size_t('S') << 32)
+                                | (std::size_t('6') << 40) | (std::size_t('7') << 48) | (std::size_t(7) << 56));
     ASSERT_EQ(ival, expected_val);
 }
 
 TEST(string56_tests, test_s56_literal_small)
 {
     strn::string56::uint small_ival = "c12"_s56.integer();
-    ASSERT_EQ(small_ival, ( 'c'|('1'<<8)|('2'<<16)|(std::size_t(3)<<56) ));
+    ASSERT_EQ(small_ival, ('c' | ('1' << 8) | ('2' << 16) | (std::size_t(3) << 56)));
 }
 
 TEST(string56_tests, test_s56_empty_literal)
@@ -203,7 +202,6 @@ TEST(string56_tests, test_hash_2)
     default:
         FAIL() << "hash() method does not work.";
     }
-
 }
 
 TEST(string56_tests, test_to_string_view)
@@ -291,7 +289,7 @@ TEST(string56_tests, test_push_back)
     strn::string56 strb("aaab");
     ASSERT_NE(str, stra);
     ASSERT_EQ(str, strb);
-    const char& last_ch = *(str.end()-1);
+    const char& last_ch = *(str.end() - 1);
     ASSERT_EQ(last_ch, 'b');
 }
 
@@ -302,7 +300,7 @@ TEST(string56_tests, test_push_back_2)
     str.push_back(ch);
     strn::string56 expected_str("1234567");
     ASSERT_EQ(str, expected_str);
-    const char& last_ch = *(str.end()-1);
+    const char& last_ch = *(str.end() - 1);
     ASSERT_EQ(last_ch, '7');
 }
 
@@ -316,7 +314,7 @@ TEST(string56_tests, test_push_back_3)
 
     strn::string56 expected_str("b");
     ASSERT_EQ(str, expected_str);
-    const char& last_ch = *(str.end()-1);
+    const char& last_ch = *(str.end() - 1);
     ASSERT_EQ(last_ch, 'b');
 }
 
@@ -330,7 +328,7 @@ TEST(string56_tests, test_pop_back)
     strn::string56 strb("aaab");
     ASSERT_EQ(str, stra);
     ASSERT_NE(str, strb);
-    const char& last_ch = *(str.end()-1);
+    const char& last_ch = *(str.end() - 1);
     ASSERT_EQ(last_ch, 'a');
 }
 
@@ -409,11 +407,17 @@ static_assert(!strn::is_enum56_v<bad_enum56>);
 
 template <class T>
     requires requires { T(0); } && requires { T(ONE); }
-constexpr bool constructible_with_enum_but_not_integer() { return false; }
+constexpr bool constructible_with_enum_but_not_integer()
+{
+    return false;
+}
 
 template <class T>
-    requires (!requires { T(0); }) && requires { T(ONE); }
-constexpr bool constructible_with_enum_but_not_integer() { return true; }
+    requires(!requires { T(0); }) && requires { T(ONE); }
+constexpr bool constructible_with_enum_but_not_integer()
+{
+    return true;
+}
 
 static_assert(!constructible_with_enum_but_not_integer<int>());
 static_assert(constructible_with_enum_but_not_integer<strn::string56>());
@@ -481,6 +485,14 @@ TEST(string56_tests, test_operator_write)
     std::ostringstream stream;
     stream << str;
     ASSERT_EQ(stream.str(), str.to_string_view());
+}
+
+TEST(string56_tests, test_operator_format)
+{
+    strn::string56 str_a("A123");
+    ASSERT_EQ(std::format("{}", str_a), "A123");
+    strn::string56 str_b("B123456");
+    ASSERT_EQ(std::format("{}", str_b), "B123456");
 }
 
 TEST(string56_tests, test_constexpr)

@@ -1,22 +1,22 @@
 #include <arba/strn/io.hpp>
 #include <arba/strn/string32.hpp>
+#include <cstdlib>
 #include <gtest/gtest.h>
 #include <sstream>
-#include <cstdlib>
 
 using namespace strn::literals;
 
 TEST(string32_tests, test_s32_literal)
 {
     strn::string32::uint ival = "c234"_s32.integer();
-    std::size_t expected_val = ('c'|('2'<<8)|('3'<<16)|('4'<<24));
+    std::size_t expected_val = ('c' | ('2' << 8) | ('3' << 16) | ('4' << 24));
     ASSERT_EQ(ival, expected_val);
 }
 
 TEST(string32_tests, test_s32_literal_small)
 {
     strn::string32::uint small_ival = "c12"_s32.integer();
-    ASSERT_EQ(small_ival, ( 'c'|('1'<<8)|('2'<<16) ));
+    ASSERT_EQ(small_ival, ('c' | ('1' << 8) | ('2' << 16)));
 }
 
 TEST(string32_tests, test_s32_empty_literal)
@@ -192,7 +192,6 @@ TEST(string32_tests, test_hash_2)
     default:
         FAIL() << "hash() method does not work.";
     }
-
 }
 
 TEST(string32_tests, test_to_string_view)
@@ -279,7 +278,7 @@ TEST(string32_tests, test_push_back)
     strn::string32 strb("aaab");
     ASSERT_NE(str, stra);
     ASSERT_EQ(str, strb);
-    const char& last_ch = *(str.end()-1);
+    const char& last_ch = *(str.end() - 1);
     ASSERT_EQ(last_ch, 'b');
 }
 
@@ -290,7 +289,7 @@ TEST(string32_tests, test_push_back_2)
     str.push_back(ch);
     strn::string32 expected_str("1234");
     ASSERT_EQ(str, expected_str);
-    const char& last_ch = *(str.end()-1);
+    const char& last_ch = *(str.end() - 1);
     ASSERT_EQ(last_ch, '4');
 }
 
@@ -304,7 +303,7 @@ TEST(string32_tests, test_push_back_3)
 
     strn::string32 expected_str("b");
     ASSERT_EQ(str, expected_str);
-    const char& last_ch = *(str.end()-1);
+    const char& last_ch = *(str.end() - 1);
     ASSERT_EQ(last_ch, 'b');
 }
 
@@ -318,7 +317,7 @@ TEST(string32_tests, test_pop_back)
     strn::string32 strb("aaab");
     ASSERT_EQ(str, stra);
     ASSERT_NE(str, strb);
-    const char& last_ch = *(str.end()-1);
+    const char& last_ch = *(str.end() - 1);
     ASSERT_EQ(last_ch, 'a');
 }
 
@@ -397,11 +396,17 @@ static_assert(!strn::is_enum32_v<bad_enum32>);
 
 template <class T>
     requires requires { T(0); } && requires { T(ONE); }
-constexpr bool constructible_with_enum_but_not_integer() { return false; }
+constexpr bool constructible_with_enum_but_not_integer()
+{
+    return false;
+}
 
 template <class T>
-    requires (!requires { T(0); }) && requires { T(ONE); }
-constexpr bool constructible_with_enum_but_not_integer() { return true; }
+    requires(!requires { T(0); }) && requires { T(ONE); }
+constexpr bool constructible_with_enum_but_not_integer()
+{
+    return true;
+}
 
 static_assert(!constructible_with_enum_but_not_integer<int>());
 static_assert(constructible_with_enum_but_not_integer<strn::string32>());
@@ -469,6 +474,14 @@ TEST(string32_tests, test_operator_write)
     std::ostringstream stream;
     stream << str;
     ASSERT_EQ(stream.str(), str.to_string_view());
+}
+
+TEST(string32_tests, test_operator_format)
+{
+    strn::string32 str_a("A12");
+    ASSERT_EQ(std::format("{}", str_a), "A12");
+    strn::string32 str_b("B123");
+    ASSERT_EQ(std::format("{}", str_b), "B123");
 }
 
 TEST(string32_tests, test_constexpr)

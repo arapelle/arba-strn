@@ -1,10 +1,10 @@
 #include <arba/strn/io.hpp>
-#include <arba/strn/string64.hpp>
-#include <arba/strn/string56.hpp>
 #include <arba/strn/string32.hpp>
-#include <string>
+#include <arba/strn/string56.hpp>
+#include <arba/strn/string64.hpp>
 #include <iostream>
 #include <locale>
+#include <string>
 
 inline namespace arba
 {
@@ -85,5 +85,5 @@ std::istream& operator>>(std::istream& stream, string32& str)
     return stream;
 }
 
-}
-}
+} // namespace strn
+} // namespace arba

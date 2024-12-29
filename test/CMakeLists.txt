@@ -1,11 +1,13 @@
-find_or_fetch_GTest()
+include(cmtk/CppLibraryTests)
+include(GoogleTest)
 
-add_cpp_library_basic_tests(GTest::gtest_main
-    SHARED ${PROJECT_NAME}
-    STATIC ${PROJECT_NAME}-static
+find_package(GTest 1.14 CONFIG REQUIRED)
+
+add_cpp_library_basic_tests(${PROJECT_TARGET_NAME} GTest::gtest_main
     SOURCES
-        project_version_tests.cpp
-        string32_tests.cpp
-        string56_tests.cpp
-        string64_tests.cpp
+    project_version_tests.cpp
+    string32_tests.cpp
+    string56_tests.cpp
+    string64_tests.cpp
+    string_tokenizer_tests.cpp
 )

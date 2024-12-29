@@ -7,9 +7,7 @@ namespace strn
 
 bool string56::is_printable() const
 {
-    for (buffer_type_::const_iterator iter = cstr_.begin(), end_iter = end();
-         iter != end_iter;
-         ++iter)
+    for (buffer_type_::const_iterator iter = cstr_.begin(), end_iter = end(); iter != end_iter; ++iter)
     {
         char ch = *iter;
         if (ch == 0)
@@ -42,7 +40,8 @@ void string56::resize(std::size_t new_length, char new_ch)
     new_length = std::min(new_length, max_length());
     auto iter = begin(), end_iter = begin() + new_length;
     // Parsing until of new string end reached or null character found.
-    for (; iter != end_iter && *iter != 0; ++iter);
+    for (; iter != end_iter && *iter != 0; ++iter)
+        ;
     // Add new characters if the new size is greater.
     for (; iter != end_iter; ++iter)
         *iter = new_ch;
@@ -52,5 +51,5 @@ void string56::resize(std::size_t new_length, char new_ch)
     cstr_.back() = new_length;
 }
 
-}
-}
+} // namespace strn
+} // namespace arba

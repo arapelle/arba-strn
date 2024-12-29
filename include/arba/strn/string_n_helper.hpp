@@ -1,7 +1,7 @@
 #pragma once
 
-#include <cstdint>
 #include <bit>
+#include <cstdint>
 
 inline namespace arba
 {
@@ -17,7 +17,7 @@ class string_n_helper
     inline constexpr static std::size_t string16_length_(const uint16_t& bytes)
     {
         static_assert(std::endian::native == std::endian::little || std::endian::native == std::endian::big);
-        static_assert(static_cast<std::size_t>(static_cast<bool>(true)) == std::size_t{1});
+        static_assert(static_cast<std::size_t>(static_cast<bool>(true)) == std::size_t{ 1 });
 
         if constexpr (std::endian::native == std::endian::little)
         {
@@ -63,5 +63,5 @@ class string_n_helper
     }
 };
 
-}
-}
+} // namespace strn
+} // namespace arba

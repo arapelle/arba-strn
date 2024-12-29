@@ -1,11 +1,10 @@
 #include <arba/strn/version.hpp>
 #include <gtest/gtest.h>
-#include <cstdlib>
 
-TEST(project_version_tests, test_version_macros)
+TEST(project_version_tests, test_version_core)
 {
-    ASSERT_EQ(ARBA_STRN_VERSION_MAJOR, 0);
-    ASSERT_EQ(ARBA_STRN_VERSION_MINOR, 3);
-    ASSERT_EQ(ARBA_STRN_VERSION_PATCH, 0);
-    ASSERT_STREQ(ARBA_STRN_VERSION, "0.3.0");
+    constexpr unsigned major = 0;
+    constexpr unsigned minor = 4;
+    constexpr unsigned patch = 0;
+    static_assert(arba::strn::version.core() == arba::vrsn::numver(major, minor, patch));
 }

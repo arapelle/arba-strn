@@ -1,24 +1,23 @@
 #include <arba/strn/io.hpp>
 #include <arba/strn/string64.hpp>
+#include <cstdlib>
 #include <gtest/gtest.h>
 #include <sstream>
-#include <cstdlib>
 
 using namespace strn::literals;
 
 TEST(string64_tests, test_s64_literal)
 {
     strn::string64::uint ival = "c234S678"_s64.integer();
-    std::size_t expected_val = ('c'|('2'<<8)|('3'<<16)|('4'<<24)
-                                |(std::size_t('S')<<32)|(std::size_t('6')<<40)
-                                |(std::size_t('7')<<48)|(std::size_t('8')<<56));
+    std::size_t expected_val = ('c' | ('2' << 8) | ('3' << 16) | ('4' << 24) | (std::size_t('S') << 32)
+                                | (std::size_t('6') << 40) | (std::size_t('7') << 48) | (std::size_t('8') << 56));
     ASSERT_EQ(ival, expected_val);
 }
 
 TEST(string64_tests, test_s64_literal_small)
 {
     strn::string64::uint small_ival = "c12"_s64.integer();
-    ASSERT_EQ(small_ival, ( 'c'|('1'<<8)|('2'<<16) ));
+    ASSERT_EQ(small_ival, ('c' | ('1' << 8) | ('2' << 16)));
 }
 
 TEST(string64_tests, test_s64_empty_literal)
@@ -206,7 +205,6 @@ TEST(string64_tests, test_hash_2)
     default:
         FAIL() << "hash() method does not work.";
     }
-
 }
 
 TEST(string64_tests, test_to_string_view)
@@ -293,7 +291,7 @@ TEST(string64_tests, test_push_back)
     strn::string64 strb("aaab");
     ASSERT_NE(str, stra);
     ASSERT_EQ(str, strb);
-    const char& last_ch = *(str.end()-1);
+    const char& last_ch = *(str.end() - 1);
     ASSERT_EQ(last_ch, 'b');
 }
 
@@ -304,7 +302,7 @@ TEST(string64_tests, test_push_back_2)
     str.push_back(ch);
     strn::string64 expected_str("12345678");
     ASSERT_EQ(str, expected_str);
-    const char& last_ch = *(str.end()-1);
+    const char& last_ch = *(str.end() - 1);
     ASSERT_EQ(last_ch, '8');
 }
 
@@ -318,7 +316,7 @@ TEST(string64_tests, test_push_back_3)
 
     strn::string64 expected_str("b");
     ASSERT_EQ(str, expected_str);
-    const char& last_ch = *(str.end()-1);
+    const char& last_ch = *(str.end() - 1);
     ASSERT_EQ(last_ch, 'b');
 }
 
@@ -332,7 +330,7 @@ TEST(string64_tests, test_pop_back)
     strn::string64 strb("aaab");
     ASSERT_EQ(str, stra);
     ASSERT_NE(str, strb);
-    const char& last_ch = *(str.end()-1);
+    const char& last_ch = *(str.end() - 1);
     ASSERT_EQ(last_ch, 'a');
 }
 
@@ -411,11 +409,17 @@ static_assert(!strn::is_enum64_v<bad_enum64>);
 
 template <class T>
     requires requires { T(0); } && requires { T(ONE); }
-constexpr bool constructible_with_enum_but_not_integer() { return false; }
+constexpr bool constructible_with_enum_but_not_integer()
+{
+    return false;
+}
 
 template <class T>
-    requires (!requires { T(0); }) && requires { T(ONE); }
-constexpr bool constructible_with_enum_but_not_integer() { return true; }
+    requires(!requires { T(0); }) && requires { T(ONE); }
+constexpr bool constructible_with_enum_but_not_integer()
+{
+    return true;
+}
 
 static_assert(!constructible_with_enum_but_not_integer<int>());
 static_assert(constructible_with_enum_but_not_integer<strn::string64>());
@@ -483,6 +487,14 @@ TEST(string64_tests, test_operator_write)
     std::ostringstream stream;
     stream << str;
     ASSERT_EQ(stream.str(), str.to_string_view());
+}
+
+TEST(string64_tests, test_operator_format)
+{
+    strn::string64 str_a("A123");
+    ASSERT_EQ(std::format("{}", str_a), "A123");
+    strn::string64 str_b("B1234567");
+    ASSERT_EQ(std::format("{}", str_b), "B1234567");
 }
 
 TEST(string64_tests, test_constexpr)
