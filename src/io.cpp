@@ -2,6 +2,7 @@
 #include <arba/strn/string32.hpp>
 #include <arba/strn/string56.hpp>
 #include <arba/strn/string64.hpp>
+
 #include <iostream>
 #include <locale>
 #include <string>

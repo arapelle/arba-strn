@@ -1,4 +1,5 @@
 #include <arba/strn/version.hpp>
+
 #include <gtest/gtest.h>
 
 TEST(project_version_tests, test_version_core)
