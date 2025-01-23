@@ -19,7 +19,7 @@ set_build_type_ifndef()
 
 set_project_name(NAMESPACE "arba" BASE_NAME "strn")
 string(TIMESTAMP configure_datetime "%Y%m%d-%H%M%S")
-set_project_semantic_version("0.4.0" BUILD_METADATA "${configure_datetime}")
+set_project_semantic_version("0.4.1" BUILD_METADATA "${configure_datetime}")
 
 project(${PROJECT_NAME}
         VERSION ${PROJECT_VERSION}
@@ -44,6 +44,7 @@ set(headers
     include/arba/strn/string56.hpp
     include/arba/strn/string64.hpp
     include/arba/strn/string_n_helper.hpp
+    include/arba/strn/string_tokenizer.hpp
 )
 
 ## Sources:
