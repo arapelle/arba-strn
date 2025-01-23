@@ -44,6 +44,7 @@ set(headers
     include/arba/strn/string56.hpp
     include/arba/strn/string64.hpp
     include/arba/strn/string_n_helper.hpp
+    include/arba/strn/string_tokenizer.hpp
 )
 
 ## Sources:
