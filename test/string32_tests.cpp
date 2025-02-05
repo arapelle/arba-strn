@@ -1,7 +1,9 @@
 #include <arba/strn/io.hpp>
 #include <arba/strn/string32.hpp>
-#include <cstdlib>
+
 #include <gtest/gtest.h>
+
+#include <cstdlib>
 #include <sstream>
 
 using namespace strn::literals;
