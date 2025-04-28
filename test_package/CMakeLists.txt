@@ -7,13 +7,13 @@ add_executable(test_package
 )
 
 set(lib_namespace "arba")
-set(lib_base_name "strn")
-find_package(${lib_namespace}-${lib_base_name} CONFIG REQUIRED)
+set(lib_feature_name "strn")
+find_package(${lib_namespace}-${lib_feature_name} CONFIG REQUIRED)
 
-if(TARGET ${lib_namespace}::${lib_base_name})
-    set(lib_target "${lib_namespace}::${lib_base_name}")
+if(TARGET ${lib_namespace}::${lib_feature_name})
+    set(lib_target "${lib_namespace}::${lib_feature_name}")
 else()
-    set(lib_target "${lib_namespace}::${lib_base_name}-static")
+    set(lib_target "${lib_namespace}::${lib_feature_name}-static")
 endif()
 target_link_libraries(test_package
     PRIVATE

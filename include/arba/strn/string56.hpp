@@ -65,7 +65,7 @@ public:
     constexpr explicit string56(const std::string_view& str) : string56()
     {
         size_t str_len = std::min<std::size_t>(max_length(), str.length());
-        cstr_.back() = str_len;
+        cstr_.back() = static_cast<uint8_t>(str_len);
         std::copy(str.begin(), str.begin() + str_len, cstr_.begin());
     }
 
