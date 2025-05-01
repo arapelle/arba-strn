@@ -48,7 +48,7 @@ void string56::resize(std::size_t new_length, char new_ch)
     // The rest of the buffer is set to 0.
     for (end_iter = begin() + max_length(); iter != end_iter; ++iter)
         *iter = 0;
-    cstr_.back() = new_length;
+    cstr_.back() = static_cast<uint8_t>(new_length);
 }
 
 } // namespace strn

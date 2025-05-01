@@ -29,7 +29,10 @@ class string_n_helper
             if ((bytes & 0x00ff))
                 return 2;
         }
-        return static_cast<std::size_t>(static_cast<bool>(bytes));
+        if constexpr (static_cast<std::size_t>(true) == 1)
+            return static_cast<std::size_t>(static_cast<bool>(bytes));
+        else
+            return static_cast<std::size_t>(bytes > 0 ? 1 : 0);
     }
 
     inline constexpr static std::size_t string32_length_(const uint32_t& bytes)
@@ -37,14 +40,14 @@ class string_n_helper
         if constexpr (std::endian::native == std::endian::little)
         {
             if ((bytes & 0xffff0000))
-                return 2 + string16_length_(bytes >> 16);
+                return 2 + string16_length_(static_cast<uint16_t>(bytes >> 16));
         }
         else
         {
             if ((bytes & 0x0000ffff))
-                return 2 + string16_length_(bytes << 16);
+                return 2 + string16_length_(static_cast<uint16_t>(bytes << 16));
         }
-        return string16_length_(bytes);
+        return string16_length_(static_cast<uint16_t>(bytes));
     }
 
     inline constexpr static std::size_t string64_length_(const uint64_t& bytes)
@@ -52,14 +55,14 @@ class string_n_helper
         if constexpr (std::endian::native == std::endian::little)
         {
             if ((bytes & 0xffffffff00000000))
-                return 4 + string32_length_(bytes >> 32);
+                return 4 + string32_length_(static_cast<uint32_t>(bytes >> 32));
         }
         else
         {
             if ((bytes & 0x00000000ffffffff))
-                return 4 + string32_length_(bytes << 32);
+                return 4 + string32_length_(static_cast<uint32_t>(bytes << 32));
         }
-        return string32_length_(bytes);
+        return string32_length_(static_cast<uint32_t>(bytes));
     }
 };
 
